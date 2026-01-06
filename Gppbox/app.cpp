@@ -20,6 +20,7 @@
 #include "app.h"
 #include "C.hpp"
 
+#include "Entity.h"
 
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
@@ -38,6 +39,7 @@ static HotReloadShader * blurShader = nullptr;
 
 static std::array<double, 60> dts;
 static int curDts = 0;
+
 
 int main()
 {
@@ -161,6 +163,7 @@ int main()
 
         g.draw(window);
 
+		
 		window.draw(fpsCounter);
 
 		if (blurShader) blurShader->update(dt);

@@ -10,6 +10,7 @@
 
 #include "Particle.hpp"
 #include "ParticleMan.hpp"
+#include "Entity.h"
 
 using namespace sf;
 
@@ -30,6 +31,10 @@ public:
 
 	ParticleMan beforeParts;
 	ParticleMan afterParts;
+
+
+	Entity player;
+	std::vector<Entity*> entities;
 
 	Game(sf::RenderWindow * win);
 

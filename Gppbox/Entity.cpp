@@ -34,6 +34,7 @@ void Entity::update(double dt, Game& game) {
 
 	ry += dy * dt * speed * C::PIXEL_SIZE;
 	dy += dt * C::GRAVITY;
+	dy = min(dy, 3.f);
 	if (game.isWall(cx, cy + 1) && ry >= 0.7) {
 		ry = 0.7;
 		dy = 0;
@@ -122,7 +123,6 @@ void Entity::move(float x, float y) {
 }
 
 void Entity::jump() {
-	if (!isFloored) return;
 	dy -= jumpPower;
 }
 

@@ -56,6 +56,8 @@ public:
 
 	void cacheWalls();
 
+	float jumpTime = 0.f;
+	float jumpDuration = 1.f;
 	bool wasPressed = false;
 	bool twasPressed = false;
 	bool isFiring = false;

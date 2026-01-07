@@ -35,6 +35,9 @@ Game::Game(sf::RenderWindow * win) {
 
 	walls.push_back(Vector2i(5.f, lastLine - 1));
 	walls.push_back(Vector2i(15.f, lastLine - 1));
+	walls.push_back(Vector2i(15.f, lastLine - 2));
+	walls.push_back(Vector2i(15.f, lastLine - 3));
+	walls.push_back(Vector2i(15.f, lastLine - 4));
 
 	/*
 	walls.push_back(Vector2i(0, lastLine-1));
@@ -56,6 +59,7 @@ Game::Game(sf::RenderWindow * win) {
 
 	foes.push_back(new Foe(7, 0));
 	foes.push_back(new Foe(10, 0));
+
 
 	cameraPosition = player.position;
 }
@@ -117,8 +121,11 @@ void Game::pollInput(double dt) {
 		player.dx = 0.0f;
 	}
 
+	jumpTime += dt;
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) {
-
+		if (jumpTime < jumpDuration) {
+			player.dy -= dt * 5.f;
+		}
 	}
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::T)) {
@@ -256,7 +263,12 @@ void Game::update(double dt) {
 }
 
 void Game::onSpacePressed() {
-	player.jump();
+	if (player.isFloored)
+	{
+		player.jump();
+		jumpTime = 0.f;
+	}
+		
 }
 
 

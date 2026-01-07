@@ -19,6 +19,7 @@ Enjmin CPP gameplay programming project using a modern c++ sandbox.
 - [x] Entity
   - [x] Sprite animation (idle, walking, hurt, dead)
   - [x] Player
+    - [ ] Coyote jump
     - [x] Weapons
       - [x] Backward fire
   - [x] Foes

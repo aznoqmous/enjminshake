@@ -21,8 +21,8 @@ public:
 	float spray = 0.05f;
 	Texture muzzleFireTexture;
 	Sprite muzzleFireSprite;
-	Vector2f muzzleFireOrigin { -3, 4 };
-
+	Vector2f muzzleFireOrigin { -6, 4 };
+	bool isDrawMuzzleFire = false;
 	Weapon() {
 		sprite = Lib::loadSprite(texture, "res/weapons.png");
 		muzzleFireSprite = Lib::loadSprite(muzzleFireTexture, "res/muzzle-fire.png");

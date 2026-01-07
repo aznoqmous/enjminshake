@@ -7,7 +7,7 @@ void Foe::update(double dt, Game& game) {
 
 	Entity::update(dt, game);
 
-	if (isAlive()) {
+	if (isAlive() && isFloored) {
 		if (flipSprite) {
 			if (!collideLeft) moveLeft(dt);
 			else moveRight(dt);

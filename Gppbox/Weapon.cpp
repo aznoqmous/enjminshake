@@ -12,12 +12,13 @@ void Weapon::draw(Entity& entity, RenderWindow& win) {
 	sprite.setPosition(entity.sprite.getPosition());
 	win.draw(sprite);
 
-	if (fireRate - fireCooldown < 0.01f)
+	if (isDrawMuzzleFire || fireRate - fireCooldown < 0.05f)
 	{
 		muzzleFireSprite.setPosition(entity.sprite.getPosition());
 		muzzleFireSprite.setOrigin(muzzleFireOrigin);
 		muzzleFireSprite.setScale(entity.flipSprite ? -C::PIXEL_SIZE : C::PIXEL_SIZE, C::PIXEL_SIZE);
 		win.draw(muzzleFireSprite);
+		isDrawMuzzleFire = false;
 	}
 }
 
@@ -49,4 +50,5 @@ void Weapon::fire(Entity& entity, Game& game) {
 	bullet->velocity.x = entity.flipSprite ? -1 : 1;
 	Lib::rotate(bullet->velocity, Dice::randF() * Dice::randSign() * spray * Lib::pi() / 2.0f);
 	game.bullets.push_back(bullet);
+	isDrawMuzzleFire = true;
 }

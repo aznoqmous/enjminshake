@@ -12,15 +12,11 @@ void Bullet::update(float dt, Game& game){
 		if (Lib::getMagnitude(e->position - position) < size) {
 			handleEntityCollision(*e);
 			game.timeSpeed = 0.f;
-			// mark bullet as not live; actual deletion handled in Game::update
-			
 		}
 	}
 	for (Vector2i& w : game.walls) {
 		if (Lib::getMagnitude(Vector2f(w.x, w.y) - position) < size) {
-			handleWallCollision(w);
-			// mark bullet as not live; actual deletion handled in Game::update
-			
+			handleWallCollision(w);			
 		}
 	}
 }

@@ -11,6 +11,7 @@
 #include "Particle.hpp"
 #include "ParticleMan.hpp"
 #include "Entity.h"
+#include "Player.h"
 
 using namespace sf;
 
@@ -33,8 +34,9 @@ public:
 	ParticleMan afterParts;
 
 
-	Entity player;
+	Player player;
 	std::vector<Entity*> entities;
+
 
 	Game(sf::RenderWindow * win);
 

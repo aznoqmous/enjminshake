@@ -13,10 +13,12 @@ static int cols = C::RES_X / C::GRID_SIZE;
 static int lastLine = C::RES_Y / C::GRID_SIZE - 1;
 
 Game::Game(sf::RenderWindow * win) {
+
+
 	this->win = win;
 	bg = sf::RectangleShape(Vector2f((float)win->getSize().x, (float)win->getSize().y));
 
-	bool isOk = tex.loadFromFile("res/bg_stars.png");
+	bool isOk = tex.loadFromFile("res/bg-clouds.png");
 	if (!isOk) {
 		printf("ERR : LOAD FAILED\n");
 	}
@@ -28,11 +30,15 @@ Game::Game(sf::RenderWindow * win) {
 	for (int i = 0; i < C::RES_X / C::GRID_SIZE; ++i) 
 		walls.push_back( Vector2i(i, lastLine) );
 
+	for (int i = 0; i < C::RES_X / C::GRID_SIZE / 2.0f + 0.5f; ++i)
+		walls.push_back(Vector2i(i + 0.5f, lastLine - 1));
+
+	/*
 	walls.push_back(Vector2i(0, lastLine-1));
 	walls.push_back(Vector2i(0, lastLine-2));
 	walls.push_back(Vector2i(0, lastLine-3));
 
-	walls.push_back(Vector2i(cols-1, lastLine - 1));
+	walls.push_back(Vector2i(cols - 1, lastLine - 1));
 	walls.push_back(Vector2i(cols-1, lastLine - 2));
 	walls.push_back(Vector2i(cols-1, lastLine - 3));
 
@@ -40,16 +46,19 @@ Game::Game(sf::RenderWindow * win) {
 	walls.push_back(Vector2i(cols >>2, lastLine - 3));
 	walls.push_back(Vector2i(cols >>2, lastLine - 4));
 	walls.push_back(Vector2i((cols >> 2) + 1, lastLine - 4));
-	cacheWalls();
+	*/
 
-	entities.push_back(&player);
+	cacheWalls();
+	
+
+	entities.push_back(new Entity("res/foe.png", 5, 0));
 }
 
 void Game::cacheWalls()
 {
 	wallSprites.clear();
 	for (Vector2i & w : walls) {
-		sf::RectangleShape rect(Vector2f(16,16));
+		sf::RectangleShape rect(Vector2f(C::GRID_SIZE, C::GRID_SIZE));
 		rect.setPosition((float)w.x * C::GRID_SIZE, (float)w.y * C::GRID_SIZE);
 		rect.setFillColor(sf::Color(0x07ff07ff));
 		wallSprites.push_back(rect);
@@ -80,12 +89,15 @@ void Game::pollInput(double dt) {
 	float lateralSpeed = 8.0;
 	float maxSpeed = 40.0;
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Q)) {
-		std::cout << "LEFTTTT" << std::endl;
-		entities[0]->dx = -0.1f;
+		player.dx = -1.0f;
 	}
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) {
-		entities[0]->dx = 0.1f;
+		player.dx = 1.0f;
+	}
+
+	if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Q) && !sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) {
+		player.dx = 0.0f;
 	}
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) {
@@ -130,6 +142,7 @@ void Game::update(double dt) {
 
 	for (Entity* e : entities)
 		e->update(dt, *this);
+	player.update(dt, *this);
 }
 
  void Game::draw(sf::RenderWindow & win) {
@@ -153,14 +166,15 @@ void Game::update(double dt) {
 		win.draw(r);
 	
 	for (Entity* e : entities)
-		win.draw(e->sprite);
+		e->draw(win);
+	player.draw(win);
 
 
 	afterParts.draw(win);
 }
 
 void Game::onSpacePressed() {
-	
+	player.jump();
 }
 
 

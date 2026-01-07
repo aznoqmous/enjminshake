@@ -54,7 +54,8 @@ Game::Game(sf::RenderWindow * win) {
 	cacheWalls();
 	
 
-	entities.push_back(new Entity("res/foe.png", 5, 0));
+	foes.push_back(new Foe(7, 0));
+	foes.push_back(new Foe(10, 0));
 
 	cameraPosition = player.position;
 }
@@ -110,8 +111,15 @@ void Game::pollInput(double dt) {
 	}
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::T)) {
-
+		if (!twasPressed) {
+			foes.push_back(new Foe(7, 0));
+			twasPressed = true;
+		}
 	}
+	else {
+		twasPressed = false;
+	}
+
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) {
 		if (!wasPressed) {
 			onSpacePressed();
@@ -149,13 +157,25 @@ void Game::update(double dt) {
 	beforeParts.update(dt);
 	afterParts.update(dt);
 
-	for (Entity* e : entities)
+	for (Foe* e : foes)
 		e->update(dt, *this);
 	
+	for (auto it = foes.begin(); it != foes.end(); ) {
+		if (!(*it)->isAlive()) {
+			deadFoes.push_back((*it));
+			it = foes.erase(it);
+		}
+		else {
+			++it;
+		}
+	}
+
+	for (Foe* f : deadFoes)
+		f->update(dt, *this);
+
 	for (Bullet* b : bullets)
 		b->update(dt, *this);
 
-	// remove dead bullets safely after updating them
 	for (auto it = bullets.begin(); it != bullets.end(); ) {
 		if (!(*it)->isLive) {
 			delete *it;
@@ -165,10 +185,15 @@ void Game::update(double dt) {
 		}
 	}
 
+
+
 	player.update(dt, *this);
 	
 	screenShakeOffset.x = 0;
 	screenShakeOffset.y = 0;
+
+	
+	
 
 	cameraPosition = Interp::lerp(cameraPosition, player.position + Vector2f(0, -200.f), dt * 10.f);
 	screenShakeOffset = Interp::lerp(screenShakeTarget, screenShakeOffset, dt * 10.f);
@@ -180,7 +205,7 @@ void Game::update(double dt) {
 			+ Vector2f(
 				sin(Lib::getTimeStamp() * Lib::pi() * screenShakeOffset.y),
 				cos((Lib::getTimeStamp() + 0.5f) * Lib::pi() * screenShakeOffset.x)
-			) * 50.f
+			) * screenShakePower
 			)
 			* Interp::lerp(0.0f, 1.0f, screenShakeTime / screenShakeDuration)
 	);
@@ -208,7 +233,10 @@ void Game::update(double dt) {
 	for (sf::RectangleShape& r : rects) 
 		win.draw(r);
 	
-	for (Entity* e : entities)
+	for (Foe* e : deadFoes)
+		e->draw(win);
+
+	for (Foe* e : foes)
 		e->draw(win);
 	
 	for (Bullet* b : bullets)
@@ -237,9 +265,16 @@ bool Game::isWall(int cx, int cy)
 
 void Game::im()
 {
-	for (Entity* e : entities) {
-		e->im();
+	using namespace ImGui;
+	if (TreeNode("game")) {
+		InputFloat("screenShakeDuration", &screenShakeDuration);
+		InputFloat("screenShakePower", &screenShakePower);
+		Value("foes", static_cast<int>(foes.size()));
+		Value("deadFoes", static_cast<int>(deadFoes.size()));
+		TreePop();
 	}
+	player.im();
+	for (Foe* f : foes) f->im();
 }
 
 void Game::screenShake(sf::Vector2f shake){

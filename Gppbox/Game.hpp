@@ -13,6 +13,7 @@
 #include "Entity.hpp"
 #include "Player.hpp"
 #include "Bullet.hpp"
+#include "Foe.hpp"
 
 using namespace sf;
 
@@ -30,8 +31,9 @@ public:
 	sf::Vector2f cameraPosition;
 	sf::Vector2f screenShakeOffset;
 	sf::Vector2f screenShakeTarget;
-	float screenShakeDuration = 1.f;
+	float screenShakeDuration = 0.3f;
 	float screenShakeTime = 0.f;
+	float screenShakePower = 3.f;
 
 	bool							closing = false;
 	
@@ -43,7 +45,8 @@ public:
 
 
 	Player player = Player(14, 0);
-	std::vector<Entity*> entities;
+	std::vector<Foe*> foes;
+	std::vector<Foe*> deadFoes;
 	std::vector<Bullet*> bullets;
 
 
@@ -53,6 +56,7 @@ public:
 
 	void processInput(sf::Event ev);
 	bool wasPressed = false;
+	bool twasPressed = false;
 	void pollInput(double dt);
 	void onSpacePressed();
 

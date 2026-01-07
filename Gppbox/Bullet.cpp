@@ -8,9 +8,16 @@ Bullet::Bullet() {
 
 void Bullet::update(float dt, Game& game){
 	position += dt * velocity * speed * float(C::PIXEL_SIZE);
-	for (Entity* e : game.entities) {
+	for (Foe* e : game.foes) {
 		if (Lib::getMagnitude(e->position - position) < size) {
 			handleEntityCollision(*e);
+			// mark bullet as not live; actual deletion handled in Game::update
+			break;
+		}
+	}
+	for (Vector2i& w : game.walls) {
+		if (Lib::getMagnitude(Vector2f(w.x, w.y) - position) < size) {
+			handleWallCollision(w);
 			// mark bullet as not live; actual deletion handled in Game::update
 			break;
 		}
@@ -25,9 +32,12 @@ void Bullet::draw(RenderWindow& win) {
 	win.draw(sprite);
 }
 
-void Bullet::handleEntityCollision(Entity& entity) {
+void Bullet::handleEntityCollision(Foe& foe) {
 	isLive = false;
+	foe.takeDamage(1.f);
+	foe.dx = copysignf(1.f, foe.position.x - position.x);
+	foe.dy = -1.f;
 }
-void Bullet::handleWallCollision() {
+void Bullet::handleWallCollision(Vector2i& wall) {
 	isLive = false;
 }

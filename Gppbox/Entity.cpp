@@ -7,53 +7,33 @@
 
 Entity::Entity(const std::string& texturePath) {
 	sprite = Lib::loadSprite(texture, texturePath);
+	currentHp = maxHp;
 }
 
 Entity::Entity(const std::string& texturePath, int cx, int cy) {
 	setPositionCell(cx, cy);
 	sprite = Lib::loadSprite(texture, texturePath);
+	currentHp = maxHp;
 }
 
 void Entity::update(double dt, Game& game) {
-
-
-	/*
-	isFloored = game.isWall(cx, cy + 1);
-	if (!isFloored) {
-		dy += dt * C::GRAVITY;
-	}
-	else if (dy >= 0.0f) {
-		setPositionCell(cx + rx, cy);
-		dy = 0.0f;
-	}
-	*/
-	/*
-	if (!game.isWall(cx + dx * dt, cy)) {
-		rx += dx * dt * speed * C::PIXEL_SIZE;
-	}
-	else {
-		dx = 0.0f;
-	}
-
-	if (!game.isWall(cx, cy + dy * dt)) {
-		ry += dy * dt * speed * C::PIXEL_SIZE;
-	}
-	*/
-
 	rx += dx * dt * speed * C::PIXEL_SIZE;
-	dx = Interp::lerp(dx, 0.f, dt);
+	dx = Interp::lerp(dx, 0.f, isAlive() ? dt : dt * 5.f); // apply frixxxion
+	collideRight = false;
 	if (game.isWall(cx + 1, cy) && rx >= 0.7) {
 		rx = 0.7;
 		dx = 0;
+		collideRight = true;
 	}
+	collideLeft = false;
 	if (game.isWall(cx - 1, cy) && rx <= 0.3) {
 		rx = 0.3;
 		dx = 0;
+		collideLeft = true;
 	}
 
 	ry += dy * dt * speed * C::PIXEL_SIZE;
 	dy += dt * C::GRAVITY;
-	//dy = Interp::lerp(dx, 0.f, dt);
 	if (game.isWall(cx, cy + 1) && ry >= 0.7) {
 		ry = 0.7;
 		dy = 0;
@@ -70,26 +50,30 @@ void Entity::update(double dt, Game& game) {
 	while (ry > 1.0f) { ry--; cy++; }
 	while (ry < 0.0f) { ry++; cy--; }
 
-	//if (dx > 0) flipSprite = false;
-	//if (dx < 0) flipSprite = true;
-	// dont flip if dx = 0
-
 	// always sync because *.smoothnessss.*
 	syncPixel();
-
 }
 
 void Entity::draw(RenderWindow& win) {
 	// fix weird initialization error
 	if (animationStartTime < 0) animationStartTime = Lib::getTimeStamp();
-	if (abs(dx) > 0) setAnimation(1);
-	else setAnimation(0);
+	
+	if (animationIndex == Animation::Hit && !isAnimationEnded()) {
+		// do nothing ?
+	}
+	else if (isAlive()) {
+		if (abs(dx) > 0) setAnimation(Animation::Moving);
+		else setAnimation(Animation::Idle);
+	}
+	else {
+		setAnimation(Animation::Dead);
+	}
 
 	if (animationLoop[animationIndex]) {
 		animationFrame = (int((Lib::getTimeStamp() - animationStartTime) / animationSpeed[animationIndex])) % animationLength[animationIndex];
 	}
 	else {
-		animationFrame = (Lib::getTimeStamp() - animationStartTime) / animationLength[animationIndex];
+		animationFrame = clamp((int((Lib::getTimeStamp() - animationStartTime) / animationSpeed[animationIndex])), 0, animationLength[animationIndex] - 1);
 	}
 
 	sprite.setTextureRect(
@@ -162,13 +146,19 @@ void Entity::setAnimation(int index) {
 void Entity::im()
 {
 	using namespace ImGui;
-	if (TreeNode("player")) {
-		Value("cx", cx);
-		Value("cy", cy);
-		Value("rx", rx);
-		Value("ry", ry);
-		Value("animationIndex", animationIndex);
-		Value("animationFrame", animationFrame);
+	if (TreeNode("foe")) {
+		Value("position.x", position.x);
+		Value("position.y", position.y);
+		Value("currentHp", currentHp);
+		Value("speed", speed);
+		Value("animation", isAnimationEnded());
 		TreePop();
 	}
+}
+
+void Entity::takeDamage(float value)
+{
+	if (!isAlive()) return;
+	currentHp -= value;
+	setAnimation(Animation::Hit);
 }

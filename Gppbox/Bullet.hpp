@@ -1,9 +1,8 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include "Lib.hpp"
-#include "Entity.hpp"
+#include "Foe.hpp"
 #include "C.hpp"
-
 using namespace sf;
 
 class Game;
@@ -25,6 +24,6 @@ public:
 	void update(float dt, Game& game);
 	void draw(RenderWindow& win);
 
-	void handleEntityCollision(Entity& entity);
-	void handleWallCollision();
+	void handleEntityCollision(Foe& foe);
+	void handleWallCollision(Vector2i& wall);
 };

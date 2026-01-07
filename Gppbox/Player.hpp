@@ -20,7 +20,8 @@ public:
 
 	void draw(RenderWindow& win) override;
 	void update(double dt, Game& game) override;
-	
+	void im() override;
+
 	void setWeaponIndex(int index);
 	void fire(Game& game);
 };

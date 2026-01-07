@@ -17,4 +17,11 @@ namespace Lib {
 
 	sf::Color makeFromHSV(float _h, float _s, float _v);
 	sf::Sprite loadSprite(sf::Texture& texture, const string& texturePath);
+
+	inline void rotate(sf::Vector2f& v, float angle) {
+		float x = v.x;
+		float y = v.y;
+		v.x = x * cos(angle) - y * sin(angle);
+		v.y = x * sin(angle) + y * cos(angle);
+	}
 };

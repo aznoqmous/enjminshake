@@ -3,6 +3,7 @@
 #include "Interp.hpp"
 #include "Bullet.hpp"
 #include "Game.hpp"
+#include "Lib.hpp"
 
 void Weapon::draw(Entity& entity, RenderWindow& win) {
 
@@ -11,7 +12,7 @@ void Weapon::draw(Entity& entity, RenderWindow& win) {
 	sprite.setPosition(entity.sprite.getPosition());
 	win.draw(sprite);
 
-	if (fireRate - fireCooldown < 0.1f)
+	if (fireRate - fireCooldown < 0.01f)
 	{
 		muzzleFireSprite.setPosition(entity.sprite.getPosition());
 		muzzleFireSprite.setOrigin(muzzleFireOrigin);
@@ -46,5 +47,6 @@ void Weapon::fire(Entity& entity, Game& game) {
 	Bullet* bullet = new Bullet();
 	bullet->position = entity.position + muzzleFireOrigin;
 	bullet->velocity.x = entity.flipSprite ? -1 : 1;
+	Lib::rotate(bullet->velocity, Dice::randF() * Dice::randSign() * spray * Lib::pi() / 2.0f);
 	game.bullets.push_back(bullet);
 }

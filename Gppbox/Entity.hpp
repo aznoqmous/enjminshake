@@ -19,8 +19,7 @@ public:
 	float ry;
 
 	// Resulting coordinates
-	float xx;
-	float yy;
+	Vector2f position;
 
 	// Movements
 	float dx;
@@ -51,8 +50,7 @@ public:
 	Entity(const std::string& texturePath);
 	Entity(const std::string& texturePath, int cx, int cy);
 
-	void initializeSprite(const std::string& texturePath);
-	void update(double dt, Game& game);
+	virtual void update(double dt, Game& game);
 	virtual void draw(RenderWindow& win);
 	
 	void setPositionPixel(float px, float py);

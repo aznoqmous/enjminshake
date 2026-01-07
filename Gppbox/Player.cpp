@@ -1,26 +1,24 @@
-#include "Player.h"
-
+#include "Player.hpp"
+#include "Interp.hpp"
 
 void Player::draw(RenderWindow& win) {
 	Entity::draw(win);
-
-	win.draw(weaponSprite);
-
-	weaponSprite.setOrigin(
-		weaponOriginX, 
-		weaponOriginY 
-		+ floor(sin(Lib::getTimeStamp() * Lib::pi() * 2.f) / 2) * 2
-	);
-	weaponSprite.setScale(flipSprite ? -C::PIXEL_SIZE : C::PIXEL_SIZE, C::PIXEL_SIZE);
-	weaponSprite.setPosition(sprite.getPosition());
+	if (activeWeapon) activeWeapon->draw(*this, win);
+	//debugRectangle.setPosition(position);
+	win.draw(debugRectangle);
+	
 }
-void Player::setWeaponIndex(int index) {
-	weaponSprite.setTextureRect(
-		sf::IntRect(
-			0,
-			index * weaponSpriteHeight,
-			weaponSpriteWidth,
-			weaponSpriteHeight
-		)
-	);
+
+void Player::update(double dt, Game& game) {
+	Entity::update(dt, game);
+	if (activeWeapon) activeWeapon->update(*this, dt, game);
+}
+
+void Player::fire(Game& game) {
+	if(activeWeapon && activeWeapon->canFire())
+	{
+		activeWeapon->fire(*this, game);
+		dx = (flipSprite ? 1 : -1) * 10.f;
+		activeWeapon->offset.x += (flipSprite ? 1 : -1) * .5f * C::PIXEL_SIZE;
+	}
 }

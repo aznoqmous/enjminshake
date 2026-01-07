@@ -20,7 +20,7 @@
 #include "app.h"
 #include "C.hpp"
 
-#include "Entity.h"
+#include "Entity.hpp"
 
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>

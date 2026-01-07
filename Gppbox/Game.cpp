@@ -2,6 +2,7 @@
 #include <imgui.h>
 #include <array>
 #include <vector>
+#include <algorithm>
 
 #include "C.hpp"
 #include "Game.hpp"
@@ -30,8 +31,8 @@ Game::Game(sf::RenderWindow * win) {
 	for (int i = 0; i < C::RES_X / C::GRID_SIZE; ++i) 
 		walls.push_back( Vector2i(i, lastLine) );
 
-	for (int i = 0; i < C::RES_X / C::GRID_SIZE / 2.0f + 0.5f; ++i)
-		walls.push_back(Vector2i(i + 0.5f, lastLine - 1));
+	walls.push_back(Vector2i(5.f, lastLine - 1));
+	walls.push_back(Vector2i(15.f, lastLine - 1));
 
 	/*
 	walls.push_back(Vector2i(0, lastLine-1));
@@ -89,11 +90,11 @@ void Game::pollInput(double dt) {
 	float lateralSpeed = 8.0;
 	float maxSpeed = 40.0;
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Q)) {
-		player.dx = -1.0f;
+		player.moveLeft(dt);
 	}
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) {
-		player.dx = 1.0f;
+		player.moveRight(dt);
 	}
 
 	if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Q) && !sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) {
@@ -115,6 +116,10 @@ void Game::pollInput(double dt) {
 	}
 	else {
 		wasPressed = false;
+	}
+
+	if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
+		player.fire(*this);
 	}
 
 }
@@ -142,6 +147,20 @@ void Game::update(double dt) {
 
 	for (Entity* e : entities)
 		e->update(dt, *this);
+	
+	for (Bullet* b : bullets)
+		b->update(dt, *this);
+
+	// remove dead bullets safely after updating them
+	for (auto it = bullets.begin(); it != bullets.end(); ) {
+		if (!(*it)->isLive) {
+			delete *it;
+			it = bullets.erase(it);
+		} else {
+			++it;
+		}
+	}
+
 	player.update(dt, *this);
 }
 
@@ -167,6 +186,10 @@ void Game::update(double dt) {
 	
 	for (Entity* e : entities)
 		e->draw(win);
+	
+	for (Bullet* b : bullets)
+		b->draw(win);
+
 	player.draw(win);
 
 

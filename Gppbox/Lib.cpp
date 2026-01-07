@@ -41,3 +41,19 @@ sf::Color Lib::makeFromHSV(float _h, float _s, float _v)
 
 	return sf::Color(RGB.x * 255.0, RGB.y * 255.0, RGB.z * 255.0);
 }
+
+sf::Sprite Lib::loadSprite(sf::Texture& texture, const string& texturePath) {
+	sf::Sprite sprite;
+	if (!texture.loadFromFile(texturePath)) {
+		cerr << "Fail to load texture !" << endl;
+	}
+	else {
+		cout << "Texture loaded !" << endl;
+		sprite.setTexture(texture);
+	}
+	return sprite;
+}
+
+float Lib::getMagnitude(sf::Vector2f v) {
+	return sqrt(v.x * v.x + v.y * v.y);
+}

@@ -13,6 +13,11 @@ public:
 		return sf::Vector2f(tx, ty);
 	}
 
+	static float lerp(float a, float b, float v) {
+		v = std::clamp(v, 0.f, 1.f);
+		return b * v + (1.f - v) * a;
+	}
+
 	static float catmull(
 		float p0, 
 		float p1, 

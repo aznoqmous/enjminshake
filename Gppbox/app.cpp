@@ -99,6 +99,8 @@ int main()
 	while (window.isOpen())
 	{
 		double dt = frameEnd - frameStart;
+		g.timeSpeed = Interp::lerp(g.timeSpeed, 1.f, dt * g.timeFreezeSpeed);
+		dt *= g.timeSpeed;
 		frameStart = Lib::getTimeStamp();
 
 		if (dt < 0.00000001) {

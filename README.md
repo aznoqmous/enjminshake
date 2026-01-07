@@ -2,27 +2,38 @@
 
 Enjmin CPP gameplay programming project using a modern c++ sandbox.
 
-Default features from sandbox :
-- hot reloadable shaders
-- imgui
-- sfml
-- eastl
+## Required features :
+- [x] Main character - Movement and 2 to 4 cell jump
+- [ ] Ingame editor
+- [ ] Ingame editor - Load/Save to file
+- [ ] Bullets - Bresenham algorithm
+- [ ] Controller support 
+- [ ] Homing missiles (using atan2)
+- [ ] Pet drone
+- [x] Screenshake
+- [x] Muzzle fire
+- [x] Recoil
+- [ ] Readme
 
-## Added features :
+## Additional features :
 - [x] Entity
   - [x] Sprite animation (idle, walking, hurt, dead)
   - [x] Player
-    - [x] Camera follows player 
     - [x] Weapons
-      - [x] MuzzleFire
-      - [x] Recoil
-      - [ ] Screenshake
+      - [x] Backward fire
   - [x] Foes
 - [x] Bullets
-  - [ ] Entity collisions
-    - [ ] Time freeze
+  - [x] Entity collisions
+    - [x] Time freeze
   - [ ] Wall collisions 
-- [ ] Reskin walls
+- [x] Camera
+  - [X] Follow player (smooth)
+  - [x] Screenshake
 - [ ] Controller support
+- [ ] Walls
+  - [ ] New skin
+  - [ ] Tilemap
+- [ ] Level editor
 
+____
 &copy; LICENCE MIT

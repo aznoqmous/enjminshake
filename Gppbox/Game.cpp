@@ -92,14 +92,25 @@ static double g_tickTimer = 0.0;
 
 void Game::pollInput(double dt) {
 
-	float lateralSpeed = 8.0;
-	float maxSpeed = 40.0;
+	isFiring = false;
+	if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
+		player.fire(*this);
+		isFiring = true;
+	}
+
+	bool isFlipped = player.flipSprite;
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Q)) {
 		player.moveLeft(dt);
+		if(isFiring){
+			player.flipSprite = isFlipped;
+		}
 	}
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) {
 		player.moveRight(dt);
+		if (isFiring) {
+			player.flipSprite = isFlipped;
+		}
 	}
 
 	if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Q) && !sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) {
@@ -128,10 +139,6 @@ void Game::pollInput(double dt) {
 	}
 	else {
 		wasPressed = false;
-	}
-
-	if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
-		player.fire(*this);
 	}
 
 }
@@ -267,6 +274,7 @@ void Game::im()
 {
 	using namespace ImGui;
 	if (TreeNode("game")) {
+		InputFloat("timeFreezeSpeed", &timeFreezeSpeed);
 		InputFloat("screenShakeDuration", &screenShakeDuration);
 		InputFloat("screenShakePower", &screenShakePower);
 		Value("foes", static_cast<int>(foes.size()));

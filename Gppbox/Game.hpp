@@ -34,6 +34,8 @@ public:
 	float screenShakeDuration = 0.3f;
 	float screenShakeTime = 0.f;
 	float screenShakePower = 3.f;
+	float timeSpeed = 1.f;
+	float timeFreezeSpeed = 50.f;
 
 	bool							closing = false;
 	
@@ -54,9 +56,10 @@ public:
 
 	void cacheWalls();
 
-	void processInput(sf::Event ev);
 	bool wasPressed = false;
 	bool twasPressed = false;
+	bool isFiring = false;
+	void processInput(sf::Event ev);
 	void pollInput(double dt);
 	void onSpacePressed();
 

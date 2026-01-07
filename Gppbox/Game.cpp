@@ -9,14 +9,16 @@
 
 #include "HotReloadShader.hpp"
 #include <iostream>
+#include "Interp.hpp"
 
 static int cols = C::RES_X / C::GRID_SIZE;
 static int lastLine = C::RES_Y / C::GRID_SIZE - 1;
 
 Game::Game(sf::RenderWindow * win) {
 
-
 	this->win = win;
+	mainCamera = win->getDefaultView();
+
 	bg = sf::RectangleShape(Vector2f((float)win->getSize().x, (float)win->getSize().y));
 
 	bool isOk = tex.loadFromFile("res/bg-clouds.png");
@@ -53,6 +55,8 @@ Game::Game(sf::RenderWindow * win) {
 	
 
 	entities.push_back(new Entity("res/foe.png", 5, 0));
+
+	cameraPosition = player.position;
 }
 
 void Game::cacheWalls()
@@ -162,7 +166,27 @@ void Game::update(double dt) {
 	}
 
 	player.update(dt, *this);
+	
+	screenShakeOffset.x = 0;
+	screenShakeOffset.y = 0;
+
+	cameraPosition = Interp::lerp(cameraPosition, player.position + Vector2f(0, -200.f), dt * 10.f);
+	screenShakeOffset = Interp::lerp(screenShakeTarget, screenShakeOffset, dt * 10.f);
+	screenShakeTime -= dt;
+	screenShakeTime = clamp(screenShakeTime, 0.f, screenShakeDuration);
+	mainCamera.setCenter(
+		cameraPosition 
+		+ (screenShakeOffset
+			+ Vector2f(
+				sin(Lib::getTimeStamp() * Lib::pi() * screenShakeOffset.y),
+				cos((Lib::getTimeStamp() + 0.5f) * Lib::pi() * screenShakeOffset.x)
+			) * 50.f
+			)
+			* Interp::lerp(0.0f, 1.0f, screenShakeTime / screenShakeDuration)
+	);
+
 }
+
 
  void Game::draw(sf::RenderWindow & win) {
 	if (closing) return;
@@ -216,4 +240,9 @@ void Game::im()
 	for (Entity* e : entities) {
 		e->im();
 	}
+}
+
+void Game::screenShake(sf::Vector2f shake){
+	screenShakeTime = screenShakeDuration;
+	screenShakeTarget = shake;
 }

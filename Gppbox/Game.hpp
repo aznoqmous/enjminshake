@@ -26,6 +26,13 @@ public:
 
 	sf::Texture						tex;
 
+	sf::View mainCamera;
+	sf::Vector2f cameraPosition;
+	sf::Vector2f screenShakeOffset;
+	sf::Vector2f screenShakeTarget;
+	float screenShakeDuration = 1.f;
+	float screenShakeTime = 0.f;
+
 	bool							closing = false;
 	
 	std::vector<sf::Vector2i>		walls;
@@ -55,4 +62,6 @@ public:
 
 	bool isWall(int cx, int cy);
 	void im();
+
+	void screenShake(sf::Vector2f shake);
 };

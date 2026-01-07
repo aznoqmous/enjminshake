@@ -68,8 +68,8 @@ int main()
 
 	Vector2i winPos;
 
-	View v = window.getDefaultView();
-	Vector2f viewCenter = v.getCenter();
+	
+	Vector2f viewCenter = g.mainCamera.getCenter();
 
 	sf::Clock timer;
 
@@ -91,13 +91,13 @@ int main()
 
 	sf::RenderTexture* destFinal = new sf::RenderTexture();
 	destFinal->create(window.getSize().x, window.getSize().y);
-	destFinal->clear(sf::Color(0, 0, 0, 0));	
+	destFinal->clear(sf::Color(0, 0, 0, 0));
 
 	float bloomWidth = 0;
-	sf::Glsl::Vec4 bloomMul(1,1,1,0.8f);
+	sf::Glsl::Vec4 bloomMul(1, 1, 1, 0.8f);
 
-    while (window.isOpen())
-    {
+	while (window.isOpen())
+	{
 		double dt = frameEnd - frameStart;
 		frameStart = Lib::getTimeStamp();
 
@@ -105,7 +105,7 @@ int main()
 			dt = 0.00000001;
 		}
 
-        sf::Event event;
+		sf::Event event;
 		while (window.pollEvent(event))//sort un evenement de la liste pour le traiter
 		{
 			ImGui::SFML::ProcessEvent(event);
@@ -121,18 +121,18 @@ int main()
 				destFinal->create(window.getSize().x, window.getSize().y);
 				destFinal->clear(sf::Color(0, 0, 0, 0));
 
-				v = sf::View(Vector2f(nsz.x * 0.5f, nsz.y * 0.5f), Vector2f((float)nsz.x, (float)nsz.y));
-				viewCenter = v.getCenter();
+				g.mainCamera = sf::View(Vector2f(nsz.x * 0.5f, nsz.y * 0.5f), Vector2f((float)nsz.x, (float)nsz.y));
+				viewCenter = g.mainCamera.getCenter();
 			}
 		}
 
 		//don't use imgui before this;
 		ImGui::SFML::Update(window, sf::seconds((float)dt));
 
-        g.update(dt);
-		
+		g.update(dt);
+
 		if (ImGui::CollapsingHeader("View")) {
-			auto sz = v.getSize();
+			auto sz = g.mainCamera.getSize();
 			ImGui::Value("size x", sz.x);
 			ImGui::Value("size y", sz.y);
 		}
@@ -152,7 +152,7 @@ int main()
 		}
         window.clear();
 
-		window.setView(v);//keep view up to date in case we want to do something with like... you know what.
+		window.setView(g.mainCamera); //keep view up to date in case we want to do something with like... you know what.
 
 		if (ImGui::CollapsingHeader("Bloom Control")) {
 			ImGui::SliderFloat("bloomWidth", &bloomWidth, 0, 55);//55 is max acceptable kernel size for constants, otherwise we should use a texture

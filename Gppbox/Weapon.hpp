@@ -15,7 +15,7 @@ public:
 	Vector2f offset;
 
 	// firee
-	float fireRate = 0.3f;
+	float fireRate = 0.2f;
 	float fireCooldown = 0.f;
 	Texture muzzleFireTexture;
 	Sprite muzzleFireSprite;

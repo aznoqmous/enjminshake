@@ -1,4 +1,5 @@
 #include "Player.hpp"
+#include "Game.hpp"
 #include "Interp.hpp"
 
 void Player::draw(RenderWindow& win) {
@@ -20,5 +21,8 @@ void Player::fire(Game& game) {
 		activeWeapon->fire(*this, game);
 		dx = (flipSprite ? 1 : -1) * 10.f;
 		activeWeapon->offset.x += (flipSprite ? 1 : -1) * .5f * C::PIXEL_SIZE;
+		sf::Vector2f shake;
+		shake.x = (flipSprite ? 1 : -1) * 10.f * C::PIXEL_SIZE;
+		game.screenShake(shake);
 	}
 }

@@ -86,7 +86,7 @@ void Entity::draw(RenderWindow& win) {
 		)
 	);
 
-	sprite.setOrigin(spriteWidth / 2.f, spriteHeight / 2.f);
+	sprite.setOrigin(spriteWidth / 2.f + 2, 20);
 	sprite.setScale(flipSprite ? -C::PIXEL_SIZE : C::PIXEL_SIZE, C::PIXEL_SIZE);
 	win.draw(sprite);
 }

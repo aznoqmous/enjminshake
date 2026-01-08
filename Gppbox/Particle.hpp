@@ -4,12 +4,14 @@
 #include "Lib.hpp"
 #include "Dice.hpp"
 #include <functional>
+#include "C.hpp"
 
 using namespace sf;
 class Particle {
 public:
 
-	RectangleShape	el;
+	Texture texture;
+	Sprite	sprite;
 	float			x = 0.0f;
 	float			y = 0.0f;
 
@@ -24,24 +26,23 @@ public:
 	bool			destroyed = false;
 
 	std::function<void(Particle * lthis, float dt)> bhv;
+	static void s_nope(Particle* lthis, float dt);
 
-	Particle();
+	Particle(std::string texturePath);
+	Particle(const Particle& other);
+	Particle& operator=(const Particle& other);
 
 	void update(float dt) {
 		x += dx * dt;
 		y += dy * dt;
 
-		el.setPosition(x, y);
-		el.rotate(dt * 3.0f);
+		sprite.setPosition(x, y);
+		sprite.setScale(scaleX * C::PIXEL_SIZE, scaleY * C::PIXEL_SIZE);
+		sprite.rotate(dt * 3.0f);
 
+		
 		life -= dt;
-		
-		el.setScale(scaleX, scaleY);
-		
+		if (life <= 0.f) destroyed = true;
 		bhv(this,dt);
-
-		if (el.getSize().x <= 0.1 || el.getSize().y <= 0.1) {
-			destroyed = true;
-		}
 	}
 };

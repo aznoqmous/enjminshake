@@ -12,13 +12,32 @@ void Bullet::update(float dt, Game& game){
 		if (Lib::getMagnitude(e->position - position) < size) {
 			handleEntityCollision(*e);
 			game.timeSpeed = 0.f;
+
+			Particle p = Particle("res/bullet-hit.png");
+			p.x = position.x;
+			p.y = position.y;
+			p.life = 0.3f;
+			p.bhv = [](Particle* p, float dt) {
+				p->sprite.setTextureRect(IntRect(floor((1.f - p->life / 0.3f) * 4) * 16, 0, 16, 16));
+				};
+			game.afterParts.add(p);
 		}
 	}
-	for (Vector2i& w : game.walls) {
-		if (Lib::getMagnitude(Vector2f(w.x, w.y) - position) < size) {
-			handleWallCollision(w);			
-		}
+	if (game.isWall(position.x / C::GRID_SIZE, position.y / C::GRID_SIZE)) {
+		Vector2i wpos = Vector2i(position.x, position.y);
+		handleWallCollision(wpos);
+
+		Particle p = Particle("res/bullet-hit.png");
+
+		p.x = position.x;
+		p.y = position.y;
+		p.life = 0.3f;
+		p.bhv = [](Particle* p, float dt) {
+			p->sprite.setTextureRect(IntRect(floor((1.f - p->life / 0.3f) * 4) * 16, 0, 16, 16));
+		};
+		game.afterParts.add(p);
 	}
+	
 }
 
 void Bullet::draw(RenderWindow& win) {

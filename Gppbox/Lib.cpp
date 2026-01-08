@@ -45,10 +45,10 @@ sf::Color Lib::makeFromHSV(float _h, float _s, float _v)
 sf::Sprite Lib::loadSprite(sf::Texture& texture, const string& texturePath) {
 	sf::Sprite sprite;
 	if (!texture.loadFromFile(texturePath)) {
-		cerr << "Fail to load texture !" << endl;
+		cerr << "Fail to load texture " << texturePath << endl;
 	}
 	else {
-		cout << "Texture loaded !" << endl;
+		cout << "Loaded texure " << texturePath << endl;
 		sprite.setTexture(texture);
 	}
 	return sprite;

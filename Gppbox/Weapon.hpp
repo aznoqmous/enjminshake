@@ -11,7 +11,7 @@ public:
 	Sprite sprite;
 	int spriteWidth = 32;
 	int spriteHeight = 16;
-	Vector2f origin { 3, 3 };
+	Vector2f origin { 3, 8 };
 	Vector2f offset;
 
 	// firee
@@ -21,7 +21,7 @@ public:
 	float spray = 0.05f;
 	Texture muzzleFireTexture;
 	Sprite muzzleFireSprite;
-	Vector2f muzzleFireOrigin { -6, 4 };
+	Vector2f muzzleFireOrigin { -6, 9 };
 	bool isDrawMuzzleFire = false;
 	Weapon() {
 		sprite = Lib::loadSprite(texture, "res/weapons.png");

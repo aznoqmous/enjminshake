@@ -6,7 +6,7 @@ void Player::draw(RenderWindow& win) {
 	Entity::draw(win);
 	if (activeWeapon) activeWeapon->draw(*this, win);
 	//debugRectangle.setPosition(position);
-	win.draw(debugRectangle);
+	//win.draw(debugRectangle);
 	
 }
 

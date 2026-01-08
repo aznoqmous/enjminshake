@@ -27,6 +27,7 @@ Game::Game(sf::RenderWindow * win) {
 	}
 	bg.setTexture(&tex);
 	bg.setSize(sf::Vector2f(C::RES_X, C::RES_Y));
+	bg.setOrigin(sf::Vector2f(C::RES_X, C::RES_Y) / 2.f);
 
 	bgShader = new HotReloadShader("res/bg.vert", "res/bg.frag");
 	
@@ -53,7 +54,6 @@ Game::Game(sf::RenderWindow * win) {
 	walls.push_back(Vector2i(cols >>2, lastLine - 4));
 	walls.push_back(Vector2i((cols >> 2) + 1, lastLine - 4));
 	*/
-
 	cacheWalls();
 	
 
@@ -68,10 +68,13 @@ void Game::cacheWalls()
 {
 	wallSprites.clear();
 	for (Vector2i & w : walls) {
-		sf::RectangleShape rect(Vector2f(C::GRID_SIZE, C::GRID_SIZE));
-		rect.setPosition((float)w.x * C::GRID_SIZE, (float)w.y * C::GRID_SIZE);
-		rect.setFillColor(sf::Color(0x07ff07ff));
-		wallSprites.push_back(rect);
+		sf::Sprite sprite;
+		sprite.setTexture(levelEditor.tileTypes[1].texture);
+		sprite.setTextureRect(sf::IntRect(32, 0, 32, 32));
+		sprite.setPosition((float)w.x * C::GRID_SIZE, (float)w.y * C::GRID_SIZE);
+		sprite.setOrigin({ 8, 8 });
+		sprite.setScale(C::PIXEL_SIZE, C::PIXEL_SIZE);
+		wallSprites.push_back(sprite);
 	}
 }
 
@@ -95,59 +98,90 @@ static double g_tickTimer = 0.0;
 
 
 void Game::pollInput(double dt) {
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Tab)) {
+		if (!tabWasPressed) {
+			mode = mode == EditMode ? PlayMode : EditMode;
+			tabWasPressed = true;
 
-	isFiring = false;
-	if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
-		player.fire(*this);
-		isFiring = true;
-	}
-
-	bool isFlipped = player.flipSprite;
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Q)) {
-		player.moveLeft(dt);
-		if(isFiring){
-			player.flipSprite = isFlipped;
-		}
-	}
-
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) {
-		player.moveRight(dt);
-		if (isFiring) {
-			player.flipSprite = isFlipped;
-		}
-	}
-
-	if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Q) && !sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) {
-		player.dx = 0.0f;
-	}
-
-	jumpTime += dt;
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) {
-		if (jumpTime < jumpDuration) {
-			player.dy -= dt * 5.f;
-		}
-	}
-
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::T)) {
-		if (!twasPressed) {
-			foes.push_back(new Foe(7, 0));
-			twasPressed = true;
+			if (mode == PlayMode) {
+				loadLevel();
+			}
 		}
 	}
 	else {
-		twasPressed = false;
+		tabWasPressed = false;
 	}
 
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) {
-		if (!wasPressed) {
-			onSpacePressed();
-			wasPressed = true;
+	if (mode == EditMode) {
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Q)) {
+			cameraPosition += Vector2f(-dt * 1000.f, 0);
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) {
+			cameraPosition += Vector2f(dt * 1000.f, 0);
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Z)) {
+			cameraPosition += Vector2f(0, -dt * 1000.f);
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) {
+			cameraPosition += Vector2f(0, dt * 1000.f);
 		}
 	}
-	else {
-		wasPressed = false;
-	}
 
+	if (mode == PlayMode) {
+
+		isFiring = false;
+		if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
+			player.fire(*this);
+			isFiring = true;
+		}
+
+		bool isFlipped = player.flipSprite;
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Q)) {
+			player.moveLeft(dt);
+			if(isFiring){
+				player.flipSprite = isFlipped;
+			}
+		}
+
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) {
+			player.moveRight(dt);
+			if (isFiring) {
+				player.flipSprite = isFlipped;
+			}
+		}
+
+		if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Q) && !sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) {
+			player.dx = 0.0f;
+		}
+
+		jumpTime += dt;
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) {
+			if (jumpTime < jumpDuration) {
+				player.dy -= dt * 5.f;
+			}
+		}
+
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::T)) {
+			if (!twasPressed) {
+				foes.push_back(new Foe(7, 0));
+				twasPressed = true;
+			}
+		}
+		else {
+			twasPressed = false;
+		}
+
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) {
+			if (!wasPressed) {
+				onSpacePressed();
+				wasPressed = true;
+			}
+		}
+		else {
+			wasPressed = false;
+		}
+
+	}
 }
 
 static sf::VertexArray va;
@@ -164,57 +198,57 @@ int blendModeIndex(sf::BlendMode bm) {
 
 void Game::update(double dt) {
 	pollInput(dt);
+	if (mode == PlayMode) {
 
-	g_time += dt;
-	if (bgShader) bgShader->update(dt);
 
-	beforeParts.update(dt);
-	afterParts.update(dt);
+		g_time += dt;
+		if (bgShader) bgShader->update(dt);
 
-	for (Foe* e : foes)
-		e->update(dt, *this);
+		beforeParts.update(dt);
+		afterParts.update(dt);
+
+		for (Foe* e : foes)
+			e->update(dt, *this);
 	
-	for (auto it = foes.begin(); it != foes.end(); ) {
-		if (!(*it)->isAlive()) {
-			deadFoes.push_back((*it));
-			it = foes.erase(it);
+		for (auto it = foes.begin(); it != foes.end(); ) {
+			if (!(*it)->isAlive()) {
+				deadFoes.push_back((*it));
+				it = foes.erase(it);
+			}
+			else {
+				++it;
+			}
 		}
-		else {
-			++it;
+
+		for (Foe* f : deadFoes)
+			f->update(dt, *this);
+
+		for (Bullet* b : bullets)
+			b->update(dt, *this);
+
+		for (auto it = bullets.begin(); it != bullets.end(); ) {
+			if (!(*it)->isLive) {
+				delete *it;
+				it = bullets.erase(it);
+			} else {
+				++it;
+			}
 		}
-	}
-
-	for (Foe* f : deadFoes)
-		f->update(dt, *this);
-
-	for (Bullet* b : bullets)
-		b->update(dt, *this);
-
-	for (auto it = bullets.begin(); it != bullets.end(); ) {
-		if (!(*it)->isLive) {
-			delete *it;
-			it = bullets.erase(it);
-		} else {
-			++it;
-		}
-	}
 
 
 
-	player.update(dt, *this);
+		player.update(dt, *this);
 	
+
+		cameraPosition = Interp::lerp(cameraPosition, player.position + Vector2f(0, -200.f), dt * 10.f);
+	}
 	screenShakeOffset.x = 0;
 	screenShakeOffset.y = 0;
-
-	
-	
-
-	cameraPosition = Interp::lerp(cameraPosition, player.position + Vector2f(0, -200.f), dt * 10.f);
 	screenShakeOffset = Interp::lerp(screenShakeTarget, screenShakeOffset, dt * 10.f);
 	screenShakeTime -= dt;
 	screenShakeTime = clamp(screenShakeTime, 0.f, screenShakeDuration);
 	mainCamera.setCenter(
-		cameraPosition 
+		cameraPosition
 		+ (screenShakeOffset
 			+ Vector2f(
 				sin(Lib::getTimeStamp() * Lib::pi() * screenShakeOffset.y),
@@ -223,6 +257,13 @@ void Game::update(double dt) {
 			)
 			* Interp::lerp(0.0f, 1.0f, screenShakeTime / screenShakeDuration)
 	);
+
+	if (mode == EditMode) {
+		levelEditor.update(dt, *this);
+	}
+
+	bg.setPosition(cameraPosition);
+	bg.setOrigin(sf::Vector2f(C::RES_X, C::RES_Y) / 2.f);
 
 }
 
@@ -241,8 +282,10 @@ void Game::update(double dt) {
 
 	beforeParts.draw(win);
 
-	for (sf::RectangleShape & r : wallSprites)
-		win.draw(r);
+	if (mode == PlayMode) {
+		for (sf::Sprite & r : wallSprites)
+			win.draw(r);
+	}
 
 	for (sf::RectangleShape& r : rects) 
 		win.draw(r);
@@ -253,13 +296,16 @@ void Game::update(double dt) {
 	for (Foe* e : foes)
 		e->draw(win);
 	
-	for (Bullet* b : bullets)
-		b->draw(win);
 
 	player.draw(win);
 
+	for (Bullet* b : bullets)
+		b->draw(win);
+
+	if(mode == EditMode) levelEditor.draw(win);
 
 	afterParts.draw(win);
+
 }
 
 void Game::onSpacePressed() {
@@ -285,6 +331,14 @@ bool Game::isWall(int cx, int cy)
 void Game::im()
 {
 	using namespace ImGui;
+
+	if (mode == EditMode && Button("PlayMode")) {
+		mode = PlayMode;
+	}
+	if (mode == PlayMode && Button("EditMode")) {
+		mode = EditMode;
+	}
+
 	if (TreeNode("game")) {
 		InputFloat("timeFreezeSpeed", &timeFreezeSpeed);
 		InputFloat("screenShakeDuration", &screenShakeDuration);
@@ -293,11 +347,36 @@ void Game::im()
 		Value("deadFoes", static_cast<int>(deadFoes.size()));
 		TreePop();
 	}
-	player.im();
-	for (Foe* f : foes) f->im();
+	if (mode == EditMode) {
+		levelEditor.im(*this);
+	}
+	if (mode == PlayMode) {
+		player.im();
+		for (Foe* f : foes) f->im();
+	}
+	
 }
 
 void Game::screenShake(sf::Vector2f shake){
 	screenShakeTime = screenShakeDuration;
 	screenShakeTarget = shake;
+}
+
+void Game::loadLevel() {
+	walls.clear();
+	foes.clear();
+	deadFoes.clear();
+	for (auto& kv : levelEditor.tiles) {
+		const sf::Vector2i& pos = kv.first;
+		TileType type = kv.second;
+		switch (type) {
+		case Wall:
+			walls.push_back(pos);
+			break;
+		case Enemy:
+			foes.push_back(new Foe(pos.x, pos.y));
+			break;
+		}
+	}
+	cacheWalls();
 }

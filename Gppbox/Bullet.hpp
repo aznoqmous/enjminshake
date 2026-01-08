@@ -15,7 +15,7 @@ public:
 	Vector2f position;
 	Vector2f velocity;
 	float speed = 1000.f;
-	float size = C::PIXEL_SIZE * 16.f;
+	float size = 32.f;
 
 	bool isLive = true;
 

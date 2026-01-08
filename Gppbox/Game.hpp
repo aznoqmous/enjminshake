@@ -14,8 +14,14 @@
 #include "Player.hpp"
 #include "Bullet.hpp"
 #include "Foe.hpp"
+#include "LevelEditor.hpp"
 
 using namespace sf;
+
+enum GameMode {
+	PlayMode,
+	EditMode,
+};
 
 class HotReloadShader;
 class Game {
@@ -40,17 +46,18 @@ public:
 	bool							closing = false;
 	
 	std::vector<sf::Vector2i>		walls;
-	std::vector<sf::RectangleShape> wallSprites;
+	std::vector<sf::Sprite> wallSprites;
 
 	ParticleMan beforeParts;
 	ParticleMan afterParts;
-
 
 	Player player = Player(14, 0);
 	std::vector<Foe*> foes;
 	std::vector<Foe*> deadFoes;
 	std::vector<Bullet*> bullets;
+	LevelEditor levelEditor;
 
+	GameMode mode = GameMode::EditMode;
 
 	Game(sf::RenderWindow * win);
 
@@ -60,6 +67,7 @@ public:
 	float jumpDuration = 1.f;
 	bool wasPressed = false;
 	bool twasPressed = false;
+	bool tabWasPressed = false;
 	bool isFiring = false;
 	void processInput(sf::Event ev);
 	void pollInput(double dt);
@@ -73,4 +81,6 @@ public:
 	void im();
 
 	void screenShake(sf::Vector2f shake);
+	void loadLevel();
 };
+

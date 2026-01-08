@@ -24,4 +24,8 @@ namespace Lib {
 		v.x = x * cos(angle) - y * sin(angle);
 		v.y = x * sin(angle) + y * cos(angle);
 	}
+
+	inline float angle(const sf::Vector2f& v) {
+		return atan2f(v.y, v.x);
+	}
 };

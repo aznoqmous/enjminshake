@@ -20,10 +20,11 @@ public:
 	bool isLive = true;
 
 	Bullet();
+	virtual ~Bullet() = default;
 
-	void update(float dt, Game& game);
-	void draw(RenderWindow& win);
+	void virtual update(float dt, Game& game);
+	void virtual draw(RenderWindow& win);
 
-	void handleEntityCollision(Foe& foe);
-	void handleWallCollision(Vector2i& wall);
+	void virtual handleEntityCollision(Foe& foe, Game& game);
+	void virtual handleWallCollision(Vector2i& wall, Game& game);
 };

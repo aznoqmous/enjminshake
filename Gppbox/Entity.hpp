@@ -25,6 +25,7 @@ public:
 	float dx;
 	float dy;
 
+	bool isFlying = false;
 	bool isFloored = false;
 
 	float speed = 3.0f;
@@ -59,9 +60,9 @@ public:
 		return currentHp > 0.f;
 	}
 
-	Entity(int cx, int cy);
+	Entity(float cx, float cy);
 	Entity(const std::string& texturePath);
-	Entity(const std::string& texturePath, int cx, int cy);
+	Entity(const std::string& texturePath, float cx, float cy);
 
 	virtual void update(double dt, Game& game);
 	virtual void draw(RenderWindow& win);

@@ -15,7 +15,7 @@ public:
 	Player() : Entity("res/peer.png") {
 		debugRectangle.setFillColor(sf::Color::Blue);
 	}
-	Player(int cx, int cy) : Entity("res/peer.png", cx, cy) {}
+	Player(float cx, float cy) : Entity("res/peer.png", cx, cy) {}
 	~Player() { delete activeWeapon; }
 
 	void draw(RenderWindow& win) override;

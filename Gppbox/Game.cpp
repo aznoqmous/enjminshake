@@ -238,6 +238,7 @@ void Game::update(double dt) {
 
 
 		player.update(dt, *this);
+		drone.update(dt, *this);
 	
 
 		cameraPosition = Interp::lerp(cameraPosition, player.position + Vector2f(0, -200.f), dt * 10.f);
@@ -296,15 +297,16 @@ void Game::update(double dt) {
 	for (Foe* e : foes)
 		e->draw(win);
 	
-
 	player.draw(win);
+	drone.draw(win);
+
+	afterParts.draw(win);
 
 	for (Bullet* b : bullets)
 		b->draw(win);
 
 	if(mode == EditMode) levelEditor.draw(win);
 
-	afterParts.draw(win);
 
 }
 
@@ -352,6 +354,7 @@ void Game::im()
 	}
 	if (mode == PlayMode) {
 		player.im();
+		drone.im();
 		for (Foe* f : foes) f->im();
 	}
 	

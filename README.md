@@ -9,8 +9,8 @@ Enjmin CPP gameplay programming project using a modern c++ sandbox.
 - [x] Simple enemy AI
 - [ ] Bullets - Bresenham algorithm
 - [ ] Controller support 
-- [ ] Homing missiles (using atan2)
-- [ ] Pet drone
+- [x] Homing missiles (using atan2)
+- [x] Pet drone
 - [x] Screenshake
 - [x] Muzzle fire
 - [x] Recoil

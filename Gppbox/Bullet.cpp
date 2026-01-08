@@ -10,32 +10,14 @@ void Bullet::update(float dt, Game& game){
 	position += dt * velocity * speed * float(C::PIXEL_SIZE);
 	for (Foe* e : game.foes) {
 		if (Lib::getMagnitude(e->position - position) < size) {
-			handleEntityCollision(*e);
+			handleEntityCollision(*e, game);
 			game.timeSpeed = 0.f;
-
-			Particle p = Particle("res/bullet-hit.png");
-			p.x = position.x;
-			p.y = position.y;
-			p.life = 0.3f;
-			p.bhv = [](Particle* p, float dt) {
-				p->sprite.setTextureRect(IntRect(floor((1.f - p->life / 0.3f) * 4) * 16, 0, 16, 16));
-				};
-			game.afterParts.add(p);
 		}
 	}
 	if (game.isWall(position.x / C::GRID_SIZE, position.y / C::GRID_SIZE)) {
 		Vector2i wpos = Vector2i(position.x, position.y);
-		handleWallCollision(wpos);
+		handleWallCollision(wpos, game);
 
-		Particle p = Particle("res/bullet-hit.png");
-
-		p.x = position.x;
-		p.y = position.y;
-		p.life = 0.3f;
-		p.bhv = [](Particle* p, float dt) {
-			p->sprite.setTextureRect(IntRect(floor((1.f - p->life / 0.3f) * 4) * 16, 0, 16, 16));
-		};
-		game.afterParts.add(p);
 	}
 	
 }
@@ -48,12 +30,32 @@ void Bullet::draw(RenderWindow& win) {
 	win.draw(sprite);
 }
 
-void Bullet::handleEntityCollision(Foe& foe) {
+void Bullet::handleEntityCollision(Foe& foe, Game& game) {
 	isLive = false;
 	foe.takeDamage(1.f);
 	foe.dx = copysignf(1.f, foe.position.x - position.x);
 	foe.dy = -1.f;
+
+
+	Particle p = Particle("res/bullet-hit.png");
+	p.x = position.x;
+	p.y = position.y;
+	p.life = 0.3f;
+	p.bhv = [](Particle* p, float dt) {
+		p->sprite.setTextureRect(IntRect(floor((1.f - p->life / 0.3f) * 4) * 16, 0, 16, 16));
+		};
+	game.afterParts.add(p);
 }
-void Bullet::handleWallCollision(Vector2i& wall) {
+void Bullet::handleWallCollision(Vector2i& wall, Game& game) {
 	isLive = false;
+
+	Particle p = Particle("res/bullet-hit.png");
+
+	p.x = position.x;
+	p.y = position.y;
+	p.life = 0.3f;
+	p.bhv = [](Particle* p, float dt) {
+		p->sprite.setTextureRect(IntRect(floor((1.f - p->life / 0.3f) * 4) * 16, 0, 16, 16));
+		};
+	game.afterParts.add(p);
 }

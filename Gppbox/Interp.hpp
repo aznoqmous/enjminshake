@@ -1,6 +1,7 @@
 #pragma once
 
 #include "SFML/Graphics.hpp"
+#include "Lib.hpp"
 
 using namespace sf;
 
@@ -16,6 +17,21 @@ public:
 	static float lerp(float a, float b, float v) {
 		v = std::clamp(v, 0.f, 1.f);
 		return b * v + (1.f - v) * a;
+	}
+
+	static float lerpAngle(float a, float b, float t)
+	{
+		const float TWO_PI = 2.0f * Lib::pi();
+
+		// compute shortest difference
+		float delta = std::fmod(b - a, TWO_PI);
+		if (delta > Lib::pi())
+			delta -= TWO_PI;
+		else if (delta < -Lib::pi())
+			delta += TWO_PI;
+
+		// interpolate
+		return a + delta * t;
 	}
 
 	static float catmull(

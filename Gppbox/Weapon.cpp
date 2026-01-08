@@ -46,7 +46,7 @@ bool Weapon::canFire() {
 void Weapon::fire(Entity& entity, Game& game) {
 	fireCooldown = fireRate;
 	Bullet* bullet = new Bullet();
-	bullet->position = entity.position + muzzleFireOrigin - Vector2f(32.f, 12.f);
+	bullet->position = entity.position + muzzleFireOrigin - Vector2f(entity.flipSprite ? 32.f : -32.f, 12.f);
 	bullet->velocity.x = entity.flipSprite ? -1 : 1;
 	Lib::rotate(bullet->velocity, Dice::randF() * Dice::randSign() * spray * Lib::pi() / 2.0f);
 	game.bullets.push_back(bullet);

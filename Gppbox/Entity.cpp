@@ -10,7 +10,7 @@ Entity::Entity(const std::string& texturePath) {
 	currentHp = maxHp;
 }
 
-Entity::Entity(const std::string& texturePath, int cx, int cy) {
+Entity::Entity(const std::string& texturePath, float cx, float cy) {
 	setPositionCell(cx, cy);
 	sprite = Lib::loadSprite(texture, texturePath);
 	currentHp = maxHp;
@@ -33,7 +33,7 @@ void Entity::update(double dt, Game& game) {
 	}
 
 	ry += dy * dt * speed * C::PIXEL_SIZE;
-	dy += dt * C::GRAVITY;
+	if(!isFlying) dy += dt * C::GRAVITY;
 	dy = min(dy, 3.f);
 	if (game.isWall(cx, cy + 1) && ry >= 0.7) {
 		ry = 0.7;

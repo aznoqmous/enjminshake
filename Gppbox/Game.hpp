@@ -15,6 +15,7 @@
 #include "Bullet.hpp"
 #include "Foe.hpp"
 #include "LevelEditor.hpp"
+#include "Drone.hpp"
 
 using namespace sf;
 
@@ -52,6 +53,7 @@ public:
 	ParticleMan afterParts;
 
 	Player player = Player(14, 0);
+	Drone drone = Drone(14, 0);
 	std::vector<Foe*> foes;
 	std::vector<Foe*> deadFoes;
 	std::vector<Bullet*> bullets;

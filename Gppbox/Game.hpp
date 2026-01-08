@@ -63,6 +63,8 @@ public:
 
 	Game(sf::RenderWindow * win);
 
+	~Game();
+
 	void cacheWalls();
 
 	float jumpTime = 0.f;

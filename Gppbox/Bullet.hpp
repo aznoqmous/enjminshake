@@ -3,13 +3,14 @@
 #include "Lib.hpp"
 #include "Foe.hpp"
 #include "C.hpp"
+#include <memory>
 using namespace sf;
 
 class Game;
 
 class Bullet {
 public:
-	Texture texture;
+	std::shared_ptr<sf::Texture> texture;
 	Sprite sprite;
 	
 	Vector2f position;

@@ -367,7 +367,10 @@ void Game::screenShake(sf::Vector2f shake){
 
 void Game::loadLevel() {
 	walls.clear();
+	// delete previous foes to avoid leaks
+	for (Foe* f : foes) delete f;
 	foes.clear();
+	for (Foe* f : deadFoes) delete f;
 	deadFoes.clear();
 	for (auto& kv : levelEditor.tiles) {
 		const sf::Vector2i& pos = kv.first;
@@ -382,4 +385,14 @@ void Game::loadLevel() {
 		}
 	}
 	cacheWalls();
+}
+
+Game::~Game() {
+	if (bgShader) {
+		delete bgShader;
+		bgShader = nullptr;
+	}
+	for (Foe* f : foes) delete f;
+	for (Foe* f : deadFoes) delete f;
+	for (Bullet* b : bullets) delete b;
 }

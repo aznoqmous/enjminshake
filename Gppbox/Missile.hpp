@@ -13,8 +13,15 @@ public:
 	void handleWallCollision(Vector2i& wall, Game& game) override;
 	
 	Missile() : Bullet() {
-		sprite = Lib::loadSprite(texture, "res/missile.png");
-		speed = 10.f;
+		texture = std::make_shared<sf::Texture>();
+		if (!texture->loadFromFile("res/missile.png")) {
+			std::cerr << "Fail to load texture res/missile.png" << std::endl;
+		}
+		else {
+			sprite.setTexture(*texture);
+		}
+		sprite.setScale(C::PIXEL_SIZE, C::PIXEL_SIZE);
+		speed = 50.f;
 		turnSpeed = 1.f;
 		smokeInterval = 0.1f;
 	}

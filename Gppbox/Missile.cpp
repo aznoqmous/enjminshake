@@ -55,10 +55,19 @@ void Missile::draw(RenderWindow& win) {
 
 void Missile::handleEntityCollision(Foe& foe, Game& game) {
 	isLive = false;
-	foe.takeDamage(1.f);
-	foe.dx = copysignf(1.f, foe.position.x - position.x);
-	foe.dy = -1.f;
+	game.timeSpeed = 0.f;
+	Vector2f shake(1.f, 0.0f);
+	Lib::rotate(shake, Dice::randF());
+	game.screenShake(shake);
 
+	for (Foe* f : game.foes) {
+		float distance = Lib::getMagnitude(position - f->position);
+		if (distance < 100.f) {
+			f->takeDamage(1.f);
+			f->dx = copysignf(1.f, f->position.x - position.x);
+			f->dy = -1.f;
+		}
+	}
 
 	Particle p = Particle("res/explosion.png");
 	p.x = position.x;
@@ -72,6 +81,19 @@ void Missile::handleEntityCollision(Foe& foe, Game& game) {
 }
 void Missile::handleWallCollision(Vector2i& wall, Game& game) {
 	isLive = false;
+	game.timeSpeed = 0.f;
+	Vector2f shake(1.f, 0.0f);
+	Lib::rotate(shake, Dice::randF());
+	game.screenShake(shake);
+
+	for (Foe* f : game.foes) {
+		float distance = Lib::getMagnitude(position - f->position);
+		if (distance < 100.f) {
+			f->takeDamage(1.f);
+			f->dx = copysignf(1.f, f->position.x - position.x);
+			f->dy = -1.f;
+		}
+	}
 
 	Particle p = Particle("res/explosion.png");
 
@@ -83,4 +105,11 @@ void Missile::handleWallCollision(Vector2i& wall, Game& game) {
 		p->sprite.setTextureRect(IntRect(floor((1.f - p->life / 0.2f) * 3) * 32, 0, 32, 32));
 		};
 	game.afterParts.add(p);
+
+	auto it = std::find(game.walls.begin(), game.walls.end(), wall);
+	if (it != game.walls.end())
+	{
+		*it = game.walls.back();
+		game.walls.pop_back();
+	}
 }

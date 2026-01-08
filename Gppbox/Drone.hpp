@@ -3,7 +3,7 @@
 class Game;
 class Drone : public Entity {
 public:
-	sf::Vector2f targetPosition = Vector2f(128, -64);
+	sf::Vector2f targetPosition = Vector2f(32, -64);
 	float fireRate = 1.f;
 	float fireCooldown = 1.f;
 

@@ -7,8 +7,8 @@ class ParticleMan {
 public:
 	std::vector<Particle> parts;
 	
-	void add(Particle & p) {
-		parts.push_back(p);
+	void add(Particle p) {
+		parts.push_back(std::move(p));
 	}
 
 	void update(double dt) {

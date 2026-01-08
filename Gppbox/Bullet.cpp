@@ -1,9 +1,15 @@
 #include "Bullet.hpp"
 #include "C.hpp"
 #include "Game.hpp"
+#include <iostream>
 
 Bullet::Bullet() {
-	sprite = Lib::loadSprite(texture, "res/bullet-fire.png");
+	texture = std::make_shared<sf::Texture>();
+	if (!texture->loadFromFile("res/bullet-fire.png")) {
+		std::cerr << "Fail to load texture res/bullet-fire.png" << std::endl;
+	} else {
+		sprite.setTexture(*texture);
+	}
 }
 
 void Bullet::update(float dt, Game& game){

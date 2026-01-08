@@ -5,12 +5,13 @@
 #include "Dice.hpp"
 #include <functional>
 #include "C.hpp"
+#include <memory>
 
 using namespace sf;
 class Particle {
 public:
 
-	Texture texture;
+	std::shared_ptr<sf::Texture> texture;
 	Sprite	sprite;
 	float			x = 0.0f;
 	float			y = 0.0f;
@@ -29,8 +30,6 @@ public:
 	static void s_nope(Particle* lthis, float dt);
 
 	Particle(std::string texturePath);
-	Particle(const Particle& other);
-	Particle& operator=(const Particle& other);
 
 	void update(float dt) {
 		x += dx * dt;
@@ -40,7 +39,6 @@ public:
 		sprite.setScale(scaleX * C::PIXEL_SIZE, scaleY * C::PIXEL_SIZE);
 		sprite.rotate(dt * 3.0f);
 
-		
 		life -= dt;
 		if (life <= 0.f) destroyed = true;
 		bhv(this,dt);

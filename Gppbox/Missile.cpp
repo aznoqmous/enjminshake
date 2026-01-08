@@ -44,7 +44,6 @@ void Missile::update(float dt, Game& game) {
 }
 
 void Missile::draw(RenderWindow& win) {
-	// Same drawing logic as Bullet for now
 	sprite.setPosition(position);
 	sprite.setScale(C::PIXEL_SIZE, C::PIXEL_SIZE);
 	sprite.setRotation(atan2(velocity.y, velocity.x) * Lib::rad2deg());
@@ -79,6 +78,7 @@ void Missile::handleEntityCollision(Foe& foe, Game& game) {
 		};
 	game.afterParts.add(p);
 }
+
 void Missile::handleWallCollision(Vector2i& wall, Game& game) {
 	isLive = false;
 	game.timeSpeed = 0.f;
@@ -96,7 +96,6 @@ void Missile::handleWallCollision(Vector2i& wall, Game& game) {
 	}
 
 	Particle p = Particle("res/explosion.png");
-
 	p.x = position.x;
 	p.y = position.y;
 	p.life = 0.2f;
@@ -105,11 +104,4 @@ void Missile::handleWallCollision(Vector2i& wall, Game& game) {
 		p->sprite.setTextureRect(IntRect(floor((1.f - p->life / 0.2f) * 3) * 32, 0, 32, 32));
 		};
 	game.afterParts.add(p);
-
-	auto it = std::find(game.walls.begin(), game.walls.end(), wall);
-	if (it != game.walls.end())
-	{
-		*it = game.walls.back();
-		game.walls.pop_back();
-	}
 }

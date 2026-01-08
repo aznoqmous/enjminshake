@@ -60,6 +60,8 @@ Game::Game(sf::RenderWindow * win) {
 	foes.push_back(new Foe(7, 0));
 	foes.push_back(new Foe(10, 0));
 
+	parallaxLayers.push_back(new ParallaxLayer("res/parallax-2.png", 0.5f));
+	parallaxLayers.push_back(new ParallaxLayer("res/parallax-1.png", 0.25f));
 
 	cameraPosition = player.position;
 }
@@ -207,6 +209,9 @@ void Game::update(double dt) {
 		beforeParts.update(dt);
 		afterParts.update(dt);
 
+		for (ParallaxLayer* pl : parallaxLayers)
+			pl->update(dt, *this);
+
 		for (Foe* e : foes)
 			e->update(dt, *this);
 	
@@ -279,7 +284,11 @@ void Game::update(double dt) {
 	states.texture = &tex;
 	sh->setUniform("texture", tex);
 	//sh->setUniform("time", g_time);
+	
 	win.draw(bg, states);
+	
+	for (ParallaxLayer* pl : parallaxLayers)
+		pl->draw(win);
 
 	beforeParts.draw(win);
 

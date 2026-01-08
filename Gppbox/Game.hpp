@@ -16,6 +16,7 @@
 #include "Foe.hpp"
 #include "LevelEditor.hpp"
 #include "Drone.hpp"
+#include "ParallaxLayer.hpp"
 
 using namespace sf;
 
@@ -57,6 +58,7 @@ public:
 	std::vector<Foe*> foes;
 	std::vector<Foe*> deadFoes;
 	std::vector<Bullet*> bullets;
+	std::vector<ParallaxLayer* > parallaxLayers;
 	LevelEditor levelEditor;
 
 	GameMode mode = GameMode::EditMode;

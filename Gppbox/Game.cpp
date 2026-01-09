@@ -63,6 +63,8 @@ Game::Game(sf::RenderWindow * win) {
 	parallaxLayers.push_back(new ParallaxLayer("res/parallax-2.png", 0.5f));
 	parallaxLayers.push_back(new ParallaxLayer("res/parallax-1.png", 0.25f));
 
+	levelEditor.loadLevel(*this);
+	loadLevel();
 	cameraPosition = player.position;
 }
 
@@ -92,6 +94,18 @@ void Game::processInput(sf::Event ev) {
 			cacheWalls();
 		}
 	}
+	
+
+	if (mode == EditMode && ev.type == sf::Event::MouseWheelMoved)
+	{
+		float target = cameraZoom * (1.f - ev.mouseWheel.delta / 10.f);
+		if (target > 0.4f && target < 2.f) {
+			cameraZoom *= 1.f - ev.mouseWheel.delta / 10.f;
+			mainCamera.zoom(1.f - ev.mouseWheel.delta / 10.f);
+		}
+		//std::cout << ev.mouseWheel.delta << '\n';
+	}
+
 }
 
 
@@ -100,6 +114,7 @@ static double g_tickTimer = 0.0;
 
 
 void Game::pollInput(double dt) {
+
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Tab)) {
 		if (!tabWasPressed) {
 			mode = mode == EditMode ? PlayMode : EditMode;
@@ -115,6 +130,11 @@ void Game::pollInput(double dt) {
 	}
 
 	if (mode == EditMode) {
+
+
+		if (sf::Mouse::VerticalWheel) {
+
+		}
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Q)) {
 			cameraPosition += Vector2f(-dt * 1000.f, 0);
 		}
@@ -130,13 +150,14 @@ void Game::pollInput(double dt) {
 	}
 
 	if (mode == PlayMode) {
-
 		isFiring = false;
 		if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
 			player.fire(*this);
 			isFiring = true;
 		}
-
+		if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Right)) {
+			drone.fire(*this);
+		}
 		bool isFlipped = player.flipSprite;
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Q)) {
 			player.moveLeft(dt);
@@ -200,6 +221,10 @@ int blendModeIndex(sf::BlendMode bm) {
 
 void Game::update(double dt) {
 	pollInput(dt);
+
+	for (ParallaxLayer* pl : parallaxLayers)
+		pl->update(dt, *this);
+
 	if (mode == PlayMode) {
 
 
@@ -209,8 +234,6 @@ void Game::update(double dt) {
 		beforeParts.update(dt);
 		afterParts.update(dt);
 
-		for (ParallaxLayer* pl : parallaxLayers)
-			pl->update(dt, *this);
 
 		for (Foe* e : foes)
 			e->update(dt, *this);
@@ -263,6 +286,12 @@ void Game::update(double dt) {
 			)
 			* Interp::lerp(0.0f, 1.0f, screenShakeTime / screenShakeDuration)
 	);
+
+	if (mode == PlayMode) {
+		mainCamera.zoom(1.f / cameraZoom);
+		cameraZoom = 1.f;
+	}
+	//mainCamera.zoom(cameraZoom);
 
 	if (mode == EditMode) {
 		levelEditor.update(dt, *this);

@@ -5,6 +5,7 @@
 #include <algorithm>
 #include "C.hpp"
 #include "Lib.hpp"
+#include <imgui-SFML.h>
 
 using namespace ImGui;
 using namespace sf;
@@ -24,17 +25,14 @@ LevelEditor::LevelEditor() {
 }
 
 void LevelEditor::update(double dt, Game& game) {
+    cameraZoom = game.cameraZoom;
 	handleInputs(dt, game);
 }
 
 void LevelEditor::draw(RenderWindow& win){
+    ImGui::Value("cameraZoom", cameraZoom);
     View view = win.getView();
     FloatRect viewport = view.getViewport();
-
-    ImVec2 mousePos = GetMousePos();
-    gridMousePos = Vector2i(mousePos.x, mousePos.y) + (Vector2i)(view.getCenter() - view.getSize() / 2.f);
-    gridMousePos.x /= C::GRID_SIZE;
-    gridMousePos.y /= C::GRID_SIZE;
 
     // DRAW GRID
     RectangleShape cell(Vector2f(C::GRID_SIZE, C::GRID_SIZE));
@@ -47,9 +45,9 @@ void LevelEditor::draw(RenderWindow& win){
     Vector2f min = view.getCenter() - view.getSize() / 2.f;
     min = Vector2f(floor(min.x / C::GRID_SIZE), floor(min.y / C::GRID_SIZE));
 
-    for (int y = 0; y < win.getSize().y / C::GRID_SIZE + 1; ++y)
+    for (int y = 0; y < win.getSize().y / C::GRID_SIZE * cameraZoom + 1; ++y)
     {
-        for (int x = 0; x < win.getSize().x / C::GRID_SIZE + 1; ++x)
+        for (int x = 0; x < win.getSize().x / C::GRID_SIZE * cameraZoom + 1; ++x)
         {
             cell.setPosition((x + min.x) * C::GRID_SIZE, (y + min.y)*C::GRID_SIZE);
             win.draw(cell);
@@ -65,7 +63,18 @@ void LevelEditor::draw(RenderWindow& win){
     }
 
 
+    if (ImGui::IsAnyItemHovered()) {
+        return;
+    }
+
     // DRAW CURSOR
+    ImVec2 mousePos = GetMousePos();
+    gridMousePos = Vector2i(mousePos.x * cameraZoom, mousePos.y * cameraZoom) + (Vector2i)(view.getCenter() - view.getSize() / 2.f);
+    ImGui::Value("mousex", gridMousePos.x);
+    ImGui::Value("mousey", gridMousePos.y);
+    gridMousePos.x = floor((float) gridMousePos.x / (float) C::GRID_SIZE);
+    gridMousePos.y = floor((float) gridMousePos.y / (float) C::GRID_SIZE);
+
     RectangleShape selectedCell(Vector2f(C::GRID_SIZE, C::GRID_SIZE));
     selectedCell.setFillColor(Color::Transparent);
     selectedCell.setOutlineColor(Color::White);
@@ -80,6 +89,9 @@ void LevelEditor::draw(RenderWindow& win){
 
 
 void LevelEditor::handleInputs(double dt, Game& game) {
+    if (ImGui::IsAnyItemHovered()) {
+        return;
+    }
     if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
         setTile(gridMousePos, selectedType, game);
     }
@@ -126,7 +138,7 @@ void LevelEditor::drawTile(TileType t, sf::Vector2f position, sf::RenderWindow& 
 }
     
 void LevelEditor::im(Game& game) {
-    if (TreeNode("LevelEditor")) {
+    if (CollapsingHeader("LevelEditor")) {
         Value("tiles", static_cast<int>(tiles.size()));
         Value("gridx", gridMousePos.x);
         Value("gridy", gridMousePos.y);
@@ -150,7 +162,14 @@ void LevelEditor::im(Game& game) {
         if (Button("Load")) {
             loadLevel(game);
         }
-        TreePop();
+        if (Button("Clear")) {
+            game.player.setPositionCell(0, 0);
+            game.player.syncPixel();
+            game.cameraPosition = game.player.position;
+            
+            tiles.clear();
+            game.loadLevel();
+        }
     }
     
 }

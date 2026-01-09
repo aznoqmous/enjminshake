@@ -43,7 +43,7 @@ static int curDts = 0;
 
 int main()
 {
-    cout << "Hello World!\n";
+    cout << "-- Nuclear Throne Platformer --\n";
 	
     sf::RenderWindow window(sf::VideoMode(C::RES_X, C::RES_Y,32), "SFML works!");
     //sf::RenderWindow window(sf::VideoMode(800, 600,32), "SFML works!");
@@ -165,7 +165,7 @@ int main()
 
         g.draw(window);
 
-		
+		fpsCounter.setPosition(g.mainCamera.getCenter() - (Vector2f) window.getSize() / 2.f);
 		window.draw(fpsCounter);
 
 		if (blurShader) blurShader->update(dt);

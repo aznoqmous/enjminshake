@@ -26,12 +26,27 @@ void Drone::update(double dt, Game& game){
 	flipSprite = game.player.flipSprite;
 	
 	fireCooldown -= dt;
+
+	if (Lib::getMagnitude(position - game.player.position) > 500.f) {
+		position = game.player.position + tPosition;
+		setPositionCell(position.x / C::GRID_SIZE, position.y / C::GRID_SIZE);
+	}
+	
+}
+
+void Drone::fire(Game& game) {
 	if (fireCooldown <= 0) {
+		ImVec2 mousePos = ImGui::GetMousePos();
+		Vector2f mouse = Vector2f(mousePos.x, mousePos.y) + (Vector2f)(game.mainCamera.getCenter() - game.mainCamera.getSize() / 2.f);
+		Vector2f target = (Vector2f)mouse - position;
+		Lib::normalize(target);
+
 		fireCooldown = fireRate;
 		Missile* miss = new Missile();
 		miss->position = position;
-		miss->velocity.x = flipSprite ? -1 : 1;
-		Lib::rotate(miss->velocity, Dice::randF() * Dice::randSign() * 0.3f * Lib::pi() / 2.0f);
+		//miss->velocity.x = flipSprite ? -1 : 1;
+		miss->velocity = target;
+		//Lib::rotate(miss->velocity, Dice::randF() * Dice::randSign() * 0.3f * Lib::pi() / 2.0f);
 		game.bullets.push_back(miss);
 	}
 }

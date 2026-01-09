@@ -7,7 +7,7 @@
 void Missile::update(float dt, Game& game) {
 	Bullet::update(dt, game);
 	float nearest = 100000.0f;
-	float minDistance = 1000.f;
+	float minDistance = 200.f;
 	Foe* nearestFoe = nullptr;
 	for (Foe* f : game.foes) {
 		float distance = Lib::getMagnitude(position - f->position);

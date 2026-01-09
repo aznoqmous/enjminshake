@@ -37,6 +37,7 @@ public:
 
 	sf::View mainCamera;
 	sf::Vector2f cameraPosition;
+	float cameraZoom = 1.f;
 	sf::Vector2f screenShakeOffset;
 	sf::Vector2f screenShakeTarget;
 	float screenShakeDuration = 0.3f;
@@ -61,7 +62,7 @@ public:
 	std::vector<ParallaxLayer* > parallaxLayers;
 	LevelEditor levelEditor;
 
-	GameMode mode = GameMode::EditMode;
+	GameMode mode = GameMode::PlayMode;
 
 	Game(sf::RenderWindow * win);
 

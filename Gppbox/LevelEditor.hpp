@@ -54,6 +54,7 @@ public:
 	std::map<sf::Vector2i, TileType, Vec2iLess> tiles;
 	sf::Vector2i gridMousePos;
 	sf::Vector2i spawnPosition;
+	float cameraZoom = 1.f;
 
 	LevelEditor();
 

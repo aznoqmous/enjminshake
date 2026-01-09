@@ -30,6 +30,11 @@ public:
 
 	float speed = 3.0f;
 	float jumpPower = 2.0f;
+	bool isCoyoteFloored() {
+		return isFloored || coyoteTime > 0.f;
+	}
+	float coyoteTime = 0.2f;
+	float coyoteDuration = 0.2f;
 
 	bool collideLeft = false;
 	bool collideRight = false;

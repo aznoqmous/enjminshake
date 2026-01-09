@@ -21,7 +21,7 @@ void Player::fire(Game& game) {
 		dx = (flipSprite ? 1 : -1) * activeWeapon->recoil;
 		activeWeapon->offset.x += (flipSprite ? 1 : -1) * .5f * C::PIXEL_SIZE;
 		sf::Vector2f shake;
-		shake.x = (flipSprite ? 1 : -1) * activeWeapon->recoil * C::PIXEL_SIZE;
+		shake.x = (flipSprite ? 1 : -1) * activeWeapon->recoil *  4.f * C::PIXEL_SIZE;
 		game.screenShake(shake);
 	}
 }

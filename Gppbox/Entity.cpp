@@ -17,8 +17,10 @@ Entity::Entity(const std::string& texturePath, float cx, float cy) {
 }
 
 void Entity::update(double dt, Game& game) {
+	coyoteTime -= dt;
+
 	rx += dx * dt * speed * C::PIXEL_SIZE;
-	dx = Interp::lerp(dx, 0.f, isAlive() ? dt : dt * 5.f); // apply frixxxion
+	dx = Interp::lerp(dx, 0.f, isAlive() ? dt * 50.f : dt * 100.f); // apply frixxxion
 	collideRight = false;
 	if (game.isWall(cx + 1, cy) && rx >= 0.7) {
 		rx = 0.7;
@@ -45,7 +47,8 @@ void Entity::update(double dt, Game& game) {
 	}
 
 	isFloored = game.isWall(cx, cy + 1);
-
+	if (isFloored && dy >= 0.f) coyoteTime = coyoteDuration;
+	
 	while (rx > 1.0f) { rx--; cx++; }
 	while (rx < 0.0f) { rx++; cx--; }
 	while (ry > 1.0f) { ry--; cy++; }
@@ -123,7 +126,8 @@ void Entity::move(float x, float y) {
 }
 
 void Entity::jump() {
-	dy -= jumpPower;
+	dy = -jumpPower;
+	coyoteTime = 0.f;
 }
 
 void Entity::moveLeft(double dt) {

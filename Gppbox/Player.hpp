@@ -7,7 +7,8 @@
 class Player : public Entity {
 public:
 	int animationLength[4] = { 4, 6, 2, 3};
-	
+
+
 	RectangleShape debugRectangle = RectangleShape(Vector2f(C::GRID_SIZE, C::GRID_SIZE));
 
 	Weapon* activeWeapon = new Weapon();

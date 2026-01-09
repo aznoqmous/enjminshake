@@ -8,7 +8,7 @@ Enjmin CPP gameplay programming project using a modern c++ sandbox.
 - [x] Ingame editor - Load/Save to file
 - [x] Simple enemy AI
 - [ ] Bullets - Bresenham algorithm
-- [ ] Controller support 
+- [x] Controller support 
 - [x] Homing missiles (using atan2)
 - [x] Pet drone
 - [x] Screenshake
@@ -20,26 +20,29 @@ Enjmin CPP gameplay programming project using a modern c++ sandbox.
 - [x] **Entity**
   - [x] Sprite animation (idle, walking, hurt, dead)
   - [x] **Player**
-    - [ ] Coyote jump
+    - [x] Coyote jump
     - [x] Weapons
       - [x] Backward fire
+      - [x] Recoil
   - [x] **Foes**
 - [x] **Bullets**
   - [x] Entity collisions
     - [x] Time freeze
+    - [x] Particle emission 
   - [x] Wall collisions 
 - [x] **Camera**
   - [X] Follow player (smooth)
   - [x] Screenshake
-- [ ] Controller support
+  - [x] Parallax background 
 - [x] **Walls**
   - [x] New skin
-  - [ ] Tilemap
 - [x] **Level editor**
   - [x] Grid display
+  - [x] Quick `Tab` switch Edit/Player mode 
   - [x] Wall placement
   - [x] Enemy placement
   - [x] Player placement
+  - [x] Mousewheel Zoom
 
 ____
 &copy; LICENCE MIT

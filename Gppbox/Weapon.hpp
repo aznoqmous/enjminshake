@@ -17,7 +17,7 @@ public:
 	// firee
 	float fireRate = 0.1f;
 	float fireCooldown = 0.f;
-	float recoil = 3.f;
+	float recoil = 0.5f;
 	float spray = 0.05f;
 	Texture muzzleFireTexture;
 	Sprite muzzleFireSprite;

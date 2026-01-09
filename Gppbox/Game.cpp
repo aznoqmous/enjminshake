@@ -151,34 +151,39 @@ void Game::pollInput(double dt) {
 
 	if (mode == PlayMode) {
 		isFiring = false;
-		if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
+		float horizontalControllerInput = sf::Joystick::getAxisPosition(0, sf::Joystick::X);
+		float deadzone = 15.f;
+		ImGui::Value("horizontal", horizontalControllerInput);
+		if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left) || sf::Joystick::isButtonPressed(0, 5)) {
 			player.fire(*this);
 			isFiring = true;
 		}
-		if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Right)) {
+		if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Right) || sf::Joystick::isButtonPressed(0, 4)) {
 			drone.fire(*this);
 		}
 		bool isFlipped = player.flipSprite;
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Q)) {
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Q) || (horizontalControllerInput < 0 && fabs(horizontalControllerInput) > deadzone)) {
+			ImGui::Value("moveleft", 1);
 			player.moveLeft(dt);
 			if(isFiring){
 				player.flipSprite = isFlipped;
 			}
 		}
 
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) {
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D) || (horizontalControllerInput > 0 && fabs(horizontalControllerInput)> deadzone)) {
+			ImGui::Value("moveright", 1);
 			player.moveRight(dt);
 			if (isFiring) {
 				player.flipSprite = isFlipped;
 			}
 		}
 
-		if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Q) && !sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) {
-			player.dx = 0.0f;
-		}
+		// if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Q) && !sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) {
+		// 	player.dx = 0.0f;
+		// }
 
 		jumpTime += dt;
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) {
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space) || sf::Joystick::isButtonPressed(0, 0)) {
 			if (jumpTime < jumpDuration) {
 				player.dy -= dt * 5.f;
 			}
@@ -194,7 +199,7 @@ void Game::pollInput(double dt) {
 			twasPressed = false;
 		}
 
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) {
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space) || sf::Joystick::isButtonPressed(0, 0)) {
 			if (!wasPressed) {
 				onSpacePressed();
 				wasPressed = true;
@@ -349,12 +354,11 @@ void Game::update(double dt) {
 }
 
 void Game::onSpacePressed() {
-	if (player.isFloored)
+	if (player.isCoyoteFloored())
 	{
 		player.jump();
 		jumpTime = 0.f;
 	}
-		
 }
 
 

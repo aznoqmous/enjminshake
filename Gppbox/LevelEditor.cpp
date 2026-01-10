@@ -59,6 +59,7 @@ void LevelEditor::draw(RenderWindow& win){
     for (auto& kv : tiles) {
         const sf::Vector2i& pos = kv.first;
         TileType type = kv.second;
+        if (type == Empty) continue;
         drawTile(type, Vector2f(pos.x * C::GRID_SIZE, pos.y * C::GRID_SIZE), win);
     }
 
@@ -130,7 +131,6 @@ void LevelEditor::setTile(Vector2i position, TileType type, Game& game) {
 }
 
 void LevelEditor::drawTile(TileType t, sf::Vector2f position, sf::RenderWindow& win) {
-    // position is already in pixels
     tileTypes[static_cast<int>(t)].sprite.setPosition(position);
     tileTypes[static_cast<int>(t)].sprite.setOrigin({8, 8});
     tileTypes[static_cast<int>(t)].sprite.setScale(C::PIXEL_SIZE, C::PIXEL_SIZE);

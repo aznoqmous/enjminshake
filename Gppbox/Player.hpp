@@ -26,7 +26,7 @@ public:
 		Weapon* laserRifle = new Weapon(WeaponLaser, 3);
 		weapons.push_back(laserRifle);
 
-		activeWeapon = laserRifle;
+		activeWeapon = gun;
 	}
 
 	Player(float cx, float cy) : Entity("res/peer.png", cx, cy) {
@@ -38,7 +38,7 @@ public:
 		Weapon* laserRifle = new Weapon(WeaponLaser, 3);
 		weapons.push_back(laserRifle);
 
-		activeWeapon = laserRifle;
+		activeWeapon = gun;
 	}
 
 	~Player() {

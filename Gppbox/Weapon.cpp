@@ -70,7 +70,7 @@ void Weapon::fire(Entity& entity, Game& game) {
 	}
 	if (type == WeaponLaser) {
 		firePosition = entity.position + muzzleFireOrigin - Vector2f(entity.flipSprite ? 32.f : -32.f, 12.f);
-		float nearest = 10000.0f;
+		float nearest = 100.0f;
 		
 		Vector2i* hittedWall = nullptr;
 		int x = floor(firePosition.x / (float) C::GRID_SIZE);

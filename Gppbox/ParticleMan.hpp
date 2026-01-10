@@ -8,6 +8,7 @@ public:
 	std::vector<Particle> parts;
 	
 	void add(Particle p) {
+		p.update(0.f);
 		parts.push_back(std::move(p));
 	}
 

@@ -2,6 +2,34 @@
 
 Enjmin CPP gameplay programming project using a modern c++ sandbox.
 
+## Features
+![ingame gif](/ingame.gif)
+The game features 2 weapons (Gun / Laser Rifle) and a friendly bot that fires rockets.
+
+### Ingame Controls
+- Q/D : Move Left / Right
+- Space : Jump (maintain pressed to jump higher)
+- Left Click : Fire equipped weapon
+- Right Click : Fire bot rocket
+- Mousewheel : Select weapon
+
+## Level editor
+![editor gif](/editor.gif)
+The game feature an editor that allows you to edit the level as you go !  
+Level can be saved and load from/to file 
+
+### Level Editor Controls
+- Tab : Switch between Game / Editor
+- ZQSD : Move camera
+- Mousewheel : Zoom/Unzoom camera
+- Left Click : Place selected tile
+- Right Click : Erase hovered tile 
+  
+### Available tiles : 
+- Spawn Position
+- Enemy
+- Wall
+
 ## Required features :
 - [x] Main character - Movement and 2 to 4 cell jump
 - [x] Ingame editor
@@ -36,7 +64,9 @@ Enjmin CPP gameplay programming project using a modern c++ sandbox.
   - [x] Parallax background 
 - [x] **Walls**
   - [x] New skin
-  - [ ] Noise based sprite
+  - [x] Random foliage on top walls
+  - [x] Destructable walls 
+  - [ ] Noise based wall sprites
 - [x] **Level editor**
   - [x] Grid display
   - [x] Quick `Tab` switch Edit/Player mode 
@@ -44,7 +74,13 @@ Enjmin CPP gameplay programming project using a modern c++ sandbox.
   - [x] Enemy placement
   - [x] Player placement
   - [x] Mousewheel Zoom
-- [ ] Controls UI
+  - [ ] Controls UI
+
+## Credits
+**Nuclear Throne** sprites from [Spriters Resources](https://www.spriters-resource.com/pc_computer/nuclearthrone/)
+
+**Nuclear Throne Font** from [yellowafterlife](https://yellowafterlife.itch.io/cc-yal-7w7-block) 
+
 
 ____
 &copy; LICENCE MIT

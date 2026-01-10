@@ -26,21 +26,10 @@ public:
 
 	bool			destroyed = false;
 
-	std::function<void(Particle * lthis, float dt)> bhv;
+	std::function<void(Particle* lthis, float dt)> bhv;
 	static void s_nope(Particle* lthis, float dt);
 
-	Particle(std::string texturePath);
+	Particle(std::string texturePath, float x, float y);
 
-	void update(float dt) {
-		x += dx * dt;
-		y += dy * dt;
-
-		sprite.setPosition(x, y);
-		sprite.setScale(scaleX * C::PIXEL_SIZE, scaleY * C::PIXEL_SIZE);
-		sprite.rotate(dt * 3.0f);
-
-		life -= dt;
-		if (life <= 0.f) destroyed = true;
-		bhv(this,dt);
-	}
+	void update(float dt);
 };

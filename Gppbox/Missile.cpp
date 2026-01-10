@@ -28,9 +28,7 @@ void Missile::update(float dt, Game& game) {
 	smokeTime -= dt;
 	if (smokeTime <= 0.f) {
 		smokeTime = smokeInterval;
-		Particle p = Particle("res/smoke.png");
-		p.x = position.x;
-		p.y = position.y;
+		Particle p = Particle("res/smoke.png", position.x, position.y);
 		p.dx = Dice::randF() * Dice::randSign() * 50.f;
 		p.dy = Dice::randF() * Dice::randSign() * 50.f;
 		p.life = 1.0f;
@@ -41,6 +39,8 @@ void Missile::update(float dt, Game& game) {
 			};
 		game.beforeParts.add(p);
 	}
+
+	if(Lib::getMagnitude(position - game.player.position) > 2000.f) isLive = false;
 }
 
 void Missile::draw(RenderWindow& win) {
@@ -68,9 +68,7 @@ void Missile::handleEntityCollision(Foe& foe, Game& game) {
 		}
 	}
 
-	Particle p = Particle("res/explosion.png");
-	p.x = position.x;
-	p.y = position.y;
+	Particle p = Particle("res/explosion.png", position.x, position.y);
 	p.life = 0.2f;
 	p.sprite.setOrigin(32.f / 2.f, 32.f / 2.f);
 	p.bhv = [](Particle* p, float dt) {
@@ -95,9 +93,7 @@ void Missile::handleWallCollision(Vector2i& wall, Game& game) {
 		}
 	}
 
-	Particle p = Particle("res/explosion.png");
-	p.x = position.x;
-	p.y = position.y;
+	Particle p = Particle("res/explosion.png", position.x, position.y);
 	p.life = 0.2f;
 	p.sprite.setOrigin(32.f / 2.f, 32.f / 2.f);
 	p.bhv = [](Particle* p, float dt) {

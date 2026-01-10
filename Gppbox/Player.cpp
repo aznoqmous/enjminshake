@@ -9,7 +9,17 @@ void Player::draw(RenderWindow& win) {
 
 void Player::update(double dt, Game& game) {
 	Entity::update(dt, game);
+	lastDamageTaken += dt;
 	if (activeWeapon) activeWeapon->update(*this, dt, game);
+
+	if (lastDamageTaken > invulnerabilityTime) {
+		for (Foe* f : game.foes) {
+			if (Lib::getMagnitude(f->position - position) < 100.f) {
+				takeDamage(1.f);
+				lastDamageTaken = 0.f;
+			}
+		}
+	}
 }
 
 void Player::fire(Game& game) {

@@ -51,7 +51,7 @@ int main()
 	window.setVerticalSyncEnabled(false);
     Font font;
 
-    if (!font.loadFromFile("res/MAIAN.TTF")) {
+    if (!font.loadFromFile("res/cc.yal.7w7.block.ttf")) {
         cout << "ERROR NO FONT" << endl;
         return 1;
     }

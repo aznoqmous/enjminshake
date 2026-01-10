@@ -20,7 +20,7 @@ void Bullet::update(float dt, Game& game){
 			game.timeSpeed = 0.f;
 		}
 	}
-	if (game.isWall(position.x / C::GRID_SIZE, position.y / C::GRID_SIZE)) {
+	if (game.isWall(floor(position.x / (float)C::GRID_SIZE), floor(position.y / (float)C::GRID_SIZE))) {
 		Vector2i wpos = Vector2i(position.x, position.y);
 		handleWallCollision(wpos, game);
 
@@ -43,9 +43,7 @@ void Bullet::handleEntityCollision(Foe& foe, Game& game) {
 	foe.dy = -1.f;
 
 
-	Particle p = Particle("res/bullet-hit.png");
-	p.x = position.x;
-	p.y = position.y;
+	Particle p = Particle("res/bullet-hit.png", position.x, position.y);
 	p.life = 0.3f;
 	p.bhv = [](Particle* p, float dt) {
 		p->sprite.setTextureRect(IntRect(floor((1.f - p->life / 0.3f) * 4) * 16, 0, 16, 16));
@@ -55,10 +53,7 @@ void Bullet::handleEntityCollision(Foe& foe, Game& game) {
 void Bullet::handleWallCollision(Vector2i& wall, Game& game) {
 	isLive = false;
 
-	Particle p = Particle("res/bullet-hit.png");
-
-	p.x = position.x;
-	p.y = position.y;
+	Particle p = Particle("res/bullet-hit.png", position.x, position.y);
 	p.life = 0.3f;
 	p.bhv = [](Particle* p, float dt) {
 		p->sprite.setTextureRect(IntRect(floor((1.f - p->life / 0.3f) * 4) * 16, 0, 16, 16));

@@ -2,21 +2,29 @@
 #include "Player.hpp"
 #include "Game.hpp"
 #include "Interp.hpp"
+#include "Dice.hpp"
+
 void Player::draw(RenderWindow& win) {
 	Entity::draw(win);
-	if (activeWeapon) activeWeapon->draw(*this, win);
+	if (isAlive() && activeWeapon) activeWeapon->draw(*this, win);
 }
 
 void Player::update(double dt, Game& game) {
 	Entity::update(dt, game);
+	if (!isAlive()) return;
+
 	lastDamageTaken += dt;
 	if (activeWeapon) activeWeapon->update(*this, dt, game);
 
 	if (lastDamageTaken > invulnerabilityTime) {
 		for (Foe* f : game.foes) {
-			if (Lib::getMagnitude(f->position - position) < 100.f) {
+			if (Lib::getMagnitude(f->position - position) < 50.f) {
 				takeDamage(1.f);
 				lastDamageTaken = 0.f;
+				game.updatePlayerHealth();
+				Vector2f shake = f->position - position;
+				Lib::normalize(shake);
+				game.screenShake(shake);
 			}
 		}
 	}

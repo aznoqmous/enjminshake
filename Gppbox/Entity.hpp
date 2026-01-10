@@ -1,6 +1,7 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
+#include <array>
 #include "Lib.hpp"
 
 using namespace sf;
@@ -52,7 +53,7 @@ public:
 	// idle, walking, damage, dead
 	float animationSpeed[4] = { .2f, .1f, .1f, .1f };
 	bool animationLoop[4] = {true, true, true, false};
-	int animationLength[4] = { 4, 6, 3, 6};
+	std::array<int, 4> animationLength = { 4, 6, 3, 6 };
 	bool isAnimationEnded() {
 		return (int((Lib::getTimeStamp() - animationStartTime) / animationSpeed[animationIndex])) >= animationLength[animationIndex];
 	}

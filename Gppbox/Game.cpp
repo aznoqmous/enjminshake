@@ -29,46 +29,33 @@ Game::Game(sf::RenderWindow * win) {
 	bg.setSize(sf::Vector2f(C::RES_X, C::RES_Y));
 	bg.setOrigin(sf::Vector2f(C::RES_X, C::RES_Y) / 2.f);
 	bgShader = new HotReloadShader("res/bg.vert", "res/bg.frag");
-	
-	for (int i = 0; i < C::RES_X / C::GRID_SIZE; ++i) 
-		walls.push_back( Vector2i(i, lastLine) );
 
-	walls.push_back(Vector2i(5.f, lastLine - 1));
-	walls.push_back(Vector2i(15.f, lastLine - 1));
-	walls.push_back(Vector2i(15.f, lastLine - 2));
-	walls.push_back(Vector2i(15.f, lastLine - 3));
-	walls.push_back(Vector2i(15.f, lastLine - 4));
 
-	/*
-	walls.push_back(Vector2i(0, lastLine-1));
-	walls.push_back(Vector2i(0, lastLine-2));
-	walls.push_back(Vector2i(0, lastLine-3));
-
-	walls.push_back(Vector2i(cols - 1, lastLine - 1));
-	walls.push_back(Vector2i(cols-1, lastLine - 2));
-	walls.push_back(Vector2i(cols-1, lastLine - 3));
-
-	walls.push_back(Vector2i(cols >>2, lastLine - 2));
-	walls.push_back(Vector2i(cols >>2, lastLine - 3));
-	walls.push_back(Vector2i(cols >>2, lastLine - 4));
-	walls.push_back(Vector2i((cols >> 2) + 1, lastLine - 4));
-	*/
-	cacheWalls();
-	
-
-	foes.push_back(new Foe(7, 0));
-	foes.push_back(new Foe(10, 0));
+	foliageTexture.loadFromFile("res/foliages.png");
 
 	parallaxLayers.push_back(new ParallaxLayer("res/parallax-2.png", 0.5f));
 	parallaxLayers.push_back(new ParallaxLayer("res/parallax-1.png", 0.25f));
+	
+	// Texts
+	for (int i = 0; i < C::RES_X / C::GRID_SIZE; ++i) 
+		walls.push_back( Vector2i(i, lastLine) );
 
-	levelEditor.loadLevel(*this);
-	loadLevel();
-	cameraPosition = player.position;
+	if (!font.loadFromFile("res/cc.yal.7w7.block.ttf")) {
+		cout << "ERROR NO FONT" << endl;
+		return;
+	}
+	gameOverText.setString("Press R to restart");
+	gameOverText.setFont(font);
+	gameOverText.setOrigin(Vector2f(gameOverText.getLocalBounds().width / 2.f, gameOverText.getLocalBounds().height / 2.f));
+	playerHealthText.setFont(font);
+
+	resetLevel();
 }
 
 void Game::cacheWalls()
 {
+	foliageSprites.clear();
+
 	wallSprites.clear();
 	for (Vector2i & w : walls) {
 		sf::Sprite sprite;
@@ -78,6 +65,15 @@ void Game::cacheWalls()
 		sprite.setOrigin({ 8, 8 });
 		sprite.setScale(C::PIXEL_SIZE, C::PIXEL_SIZE);
 		wallSprites.push_back(sprite);
+
+		if (levelEditor.tiles[w + Vector2i(0, -1)] != Wall) {
+			sf::Sprite fSprite;
+			fSprite.setTexture(foliageTexture);
+			fSprite.setTextureRect(sf::IntRect((int) Dice::randF() * (64 - 16), 0, 16, 16));
+			fSprite.setPosition((float)w.x * C::GRID_SIZE, (float)w.y * C::GRID_SIZE - 8.f * C::PIXEL_SIZE);
+			fSprite.setScale(C::PIXEL_SIZE, C::PIXEL_SIZE);
+			foliageSprites.push_back(fSprite);
+		}
 	}
 }
 
@@ -103,6 +99,13 @@ void Game::processInput(sf::Event ev) {
 			cameraZoom *= 1.f - ev.mouseWheel.delta / 10.f;
 			mainCamera.zoom(1.f - ev.mouseWheel.delta / 10.f);
 		}
+		//std::cout << ev.mouseWheel.delta << '\n';
+	}
+
+	if (mode == PlayMode && ev.type == sf::Event::MouseWheelMoved)
+	{
+		player.activeWeaponIndex = (player.activeWeaponIndex + (int) copysign(1, ev.mouseWheel.delta)) % player.weapons.size();
+		player.activeWeapon = player.weapons[player.activeWeaponIndex];
 		//std::cout << ev.mouseWheel.delta << '\n';
 	}
 
@@ -149,7 +152,7 @@ void Game::pollInput(double dt) {
 		}
 	}
 
-	if (mode == PlayMode) {
+	if (mode == PlayMode && player.isAlive()) {
 		isFiring = false;
 		float horizontalControllerInput = sf::Joystick::getAxisPosition(0, sf::Joystick::X);
 		float deadzone = 15.f;
@@ -163,7 +166,6 @@ void Game::pollInput(double dt) {
 		}
 		bool isFlipped = player.flipSprite;
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Q) || (horizontalControllerInput < 0 && fabs(horizontalControllerInput) > deadzone)) {
-			ImGui::Value("moveleft", 1);
 			player.moveLeft(dt);
 			if(isFiring){
 				player.flipSprite = isFlipped;
@@ -171,16 +173,11 @@ void Game::pollInput(double dt) {
 		}
 
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D) || (horizontalControllerInput > 0 && fabs(horizontalControllerInput)> deadzone)) {
-			ImGui::Value("moveright", 1);
 			player.moveRight(dt);
 			if (isFiring) {
 				player.flipSprite = isFlipped;
 			}
 		}
-
-		// if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Q) && !sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) {
-		// 	player.dx = 0.0f;
-		// }
 
 		jumpTime += dt;
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space) || sf::Joystick::isButtonPressed(0, 0)) {
@@ -210,6 +207,11 @@ void Game::pollInput(double dt) {
 		}
 
 	}
+
+	if (mode == PlayMode && !player.isAlive() && sf::Keyboard::isKeyPressed(sf::Keyboard::Key::R)) {
+		resetLevel();
+		
+	}
 }
 
 static sf::VertexArray va;
@@ -232,13 +234,11 @@ void Game::update(double dt) {
 
 	if (mode == PlayMode) {
 
-
 		g_time += dt;
 		if (bgShader) bgShader->update(dt);
 
 		beforeParts.update(dt);
 		afterParts.update(dt);
-
 
 		for (Foe* e : foes)
 			e->update(dt, *this);
@@ -268,11 +268,8 @@ void Game::update(double dt) {
 			}
 		}
 
-
-
 		player.update(dt, *this);
 		drone.update(dt, *this);
-	
 
 		cameraPosition = Interp::lerp(cameraPosition, player.position + Vector2f(0, -200.f), dt * 10.f);
 	}
@@ -329,6 +326,8 @@ void Game::update(double dt) {
 	if (mode == PlayMode) {
 		for (sf::Sprite & r : wallSprites)
 			win.draw(r);
+		for (sf::Sprite& r : foliageSprites)
+			win.draw(r);
 	}
 
 	for (sf::RectangleShape& r : rects) 
@@ -350,7 +349,17 @@ void Game::update(double dt) {
 
 	if(mode == EditMode) levelEditor.draw(win);
 
-
+	if (mode == PlayMode) {
+		if (player.isAlive()) {
+			playerHealthText.setPosition(cameraPosition - mainCamera.getSize() / 2.f + Vector2f(20.f, 0.f));
+			win.draw(playerHealthText);
+		}
+		else {
+			gameOver();
+			gameOverText.setPosition(cameraPosition);
+			win.draw(gameOverText);
+		}
+	}
 }
 
 void Game::onSpacePressed() {
@@ -427,6 +436,21 @@ void Game::loadLevel() {
 		}
 	}
 	cacheWalls();
+}
+void Game::resetLevel() {
+	levelEditor.loadLevel(*this);
+	loadLevel();
+	cameraPosition = player.position;
+	player.currentHp = player.maxHp;
+	updatePlayerHealth();
+}
+void Game::gameOver() {
+	
+}
+
+void Game::updatePlayerHealth() {
+	playerHealthText.setString("HP:" + to_string((int)player.currentHp) + "/" + to_string((int)player.maxHp));
+	playerHealthText.setCharacterSize(60);
 }
 
 Game::~Game() {

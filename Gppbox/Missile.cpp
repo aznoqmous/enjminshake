@@ -1,8 +1,8 @@
+#include <iostream>
 #include "Missile.hpp"
 #include "Game.hpp"
 #include "Interp.hpp"
 #include "SFML/Graphics.hpp"
-
 
 void Missile::update(float dt, Game& game) {
 	Bullet::update(dt, game);
@@ -18,6 +18,7 @@ void Missile::update(float dt, Game& game) {
 	}
 
 	speed += dt * 100.f;
+	turnSpeed = 3.f;
 	if (nearest < minDistance && nearestFoe) {
 		float targetAngle = Lib::angle(nearestFoe->position - position);
 		float vangle = Lib::angle(velocity);
@@ -61,20 +62,26 @@ void Missile::handleEntityCollision(Foe& foe, Game& game) {
 
 	for (Foe* f : game.foes) {
 		float distance = Lib::getMagnitude(position - f->position);
-		if (distance < 100.f) {
-			f->takeDamage(1.f);
+		if (distance < explosionRange) {
+			f->takeDamage(3.f);
 			f->dx = copysignf(1.f, f->position.x - position.x);
 			f->dy = -1.f;
 		}
 	}
 
-	Particle p = Particle("res/explosion.png", position.x, position.y);
-	p.life = 0.2f;
-	p.sprite.setOrigin(32.f / 2.f, 32.f / 2.f);
-	p.bhv = [](Particle* p, float dt) {
-		p->sprite.setTextureRect(IntRect(floor((1.f - p->life / 0.2f) * 3) * 32, 0, 32, 32));
-		};
-	game.afterParts.add(p);
+	spawnExplosionParticles(position, game);
+
+	for (auto it = game.walls.begin(); it != game.walls.end(); ) {
+		float distance = Lib::getMagnitude(position - Vector2f(it->x * C::GRID_SIZE, it->y * C::GRID_SIZE));
+		if (distance < explosionRange) {
+			spawnExplosionParticles(Vector2f(it->x * C::GRID_SIZE, it->y * C::GRID_SIZE), game);
+			it = game.walls.erase(it);
+		}
+		else {
+			++it;
+		}
+	}
+	game.cacheWalls();
 }
 
 void Missile::handleWallCollision(Vector2i& wall, Game& game) {
@@ -86,13 +93,29 @@ void Missile::handleWallCollision(Vector2i& wall, Game& game) {
 
 	for (Foe* f : game.foes) {
 		float distance = Lib::getMagnitude(position - f->position);
-		if (distance < 100.f) {
-			f->takeDamage(1.f);
+		if (distance < explosionRange) {
+			f->takeDamage(3.f);
 			f->dx = copysignf(1.f, f->position.x - position.x);
 			f->dy = -1.f;
 		}
 	}
 
+	spawnExplosionParticles(position, game);
+
+	for (auto it = game.walls.begin(); it != game.walls.end(); ) {
+		float distance = Lib::getMagnitude(position - Vector2f(it->x * C::GRID_SIZE, it->y * C::GRID_SIZE));
+		if (distance < explosionRange || (it->x == wall.x && it->y == wall.y)) {
+			spawnExplosionParticles(Vector2f(it->x * C::GRID_SIZE, it->y * C::GRID_SIZE), game);
+			it = game.walls.erase(it);
+		}
+		else {
+			++it;
+		}
+	}
+	game.cacheWalls();
+}
+
+void Missile::spawnExplosionParticles(Vector2f position, Game& game) {
 	Particle p = Particle("res/explosion.png", position.x, position.y);
 	p.life = 0.2f;
 	p.sprite.setOrigin(32.f / 2.f, 32.f / 2.f);

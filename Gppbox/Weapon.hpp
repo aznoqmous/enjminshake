@@ -3,16 +3,26 @@
 #include "Entity.hpp"
 class Game;
 
+enum WeaponType {
+	WeaponBullet,
+	WeaponLaser
+};
+
 class Weapon {
 public:
 	int weaponIndex = 0;
-
+	WeaponType type;
 	Texture texture;
 	Sprite sprite;
 	int spriteWidth = 32;
 	int spriteHeight = 16;
 	Vector2f origin { 3, 8 };
 	Vector2f offset;
+
+	// laser weapons
+	Vector2f firePosition;
+	Vector2f fireTarget;
+	sf::VertexArray laserVertices;
 
 	// firee
 	float fireRate = 0.1f;
@@ -23,10 +33,13 @@ public:
 	Sprite muzzleFireSprite;
 	Vector2f muzzleFireOrigin { -6, 9 };
 	bool isDrawMuzzleFire = false;
-	Weapon() {
+	Weapon(WeaponType type, int weaponIndex) {
+		this->type = type;
 		sprite = Lib::loadSprite(texture, "res/weapons.png");
 		muzzleFireSprite = Lib::loadSprite(muzzleFireTexture, "res/muzzle-fire.png");
 		setWeaponIndex(weaponIndex);
+
+		laserVertices = VertexArray(LinesStrip, 10);
 	}
 
 	bool canFire();
@@ -37,3 +50,4 @@ public:
 	void setWeaponIndex(int index);
 
 };
+

@@ -165,7 +165,8 @@ int main()
 
         g.draw(window);
 
-		fpsCounter.setPosition(g.mainCamera.getCenter() - (Vector2f) window.getSize() / 2.f);
+		//fpsCounter.setPosition(g.mainCamera.getCenter() - (Vector2f)window.getSize() / 2.f + Vector2f(10.f, 0.f));
+		fpsCounter.setPosition(g.mainCamera.getCenter() - Vector2f(0.f, window.getSize().y / 2.f));
 		window.draw(fpsCounter);
 
 		if (blurShader) blurShader->update(dt);

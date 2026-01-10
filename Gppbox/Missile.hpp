@@ -4,6 +4,7 @@
 class Game;
 class Missile : public Bullet {
 public:
+	float explosionRange = 80.f;
 	float smokeInterval = 0.5f;
 	float smokeTime = 0.f;
 	float turnSpeed = 1.f;
@@ -11,7 +12,7 @@ public:
 	void draw(RenderWindow& win) override;
 	void handleEntityCollision(Foe& foe, Game& game) override;
 	void handleWallCollision(Vector2i& wall, Game& game) override;
-	
+	void spawnExplosionParticles(Vector2f position, Game& game);
 	Missile() : Bullet() {
 		texture = std::make_shared<sf::Texture>();
 		if (!texture->loadFromFile("res/missile.png")) {

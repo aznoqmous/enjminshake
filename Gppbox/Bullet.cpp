@@ -21,11 +21,9 @@ void Bullet::update(float dt, Game& game){
 		}
 	}
 	if (game.isWall(floor(position.x / (float)C::GRID_SIZE), floor(position.y / (float)C::GRID_SIZE))) {
-		Vector2i wpos = Vector2i(position.x, position.y);
+		Vector2i wpos = Vector2i(floor(position.x / (float)C::GRID_SIZE), floor(position.y / (float)C::GRID_SIZE));
 		handleWallCollision(wpos, game);
-
 	}
-	
 }
 
 void Bullet::draw(RenderWindow& win) {

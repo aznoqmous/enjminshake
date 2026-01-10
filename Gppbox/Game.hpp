@@ -28,12 +28,13 @@ enum GameMode {
 class HotReloadShader;
 class Game {
 public:
-	sf::RenderWindow*				win = nullptr;
+	sf::RenderWindow* win = nullptr;
 
-	sf::RectangleShape				bg;
-	HotReloadShader *				bgShader = nullptr;
+	sf::RectangleShape bg;
+	HotReloadShader* bgShader = nullptr;
 
-	sf::Texture						tex;
+	sf::Texture	tex;
+	sf::Font font;
 
 	sf::View mainCamera;
 	sf::Vector2f cameraPosition;
@@ -46,10 +47,12 @@ public:
 	float timeSpeed = 1.f;
 	float timeFreezeSpeed = 50.f;
 
-	bool							closing = false;
-	
+	bool closing = false;
+
 	std::vector<sf::Vector2i>		walls;
 	std::vector<sf::Sprite> wallSprites;
+	sf::Texture foliageTexture;
+	std::vector<sf::Sprite> foliageSprites;
 
 	ParticleMan beforeParts;
 	ParticleMan afterParts;
@@ -64,14 +67,17 @@ public:
 
 	GameMode mode = GameMode::PlayMode;
 
-	Game(sf::RenderWindow * win);
+	sf::Text gameOverText;
+	sf::Text playerHealthText;
+
+	Game(sf::RenderWindow* win);
 
 	~Game();
 
 	void cacheWalls();
 
 	float jumpTime = 0.f;
-	float jumpDuration = 1.f;
+	float jumpDuration = 0.5f;
 	bool wasPressed = false;
 	bool twasPressed = false;
 	bool tabWasPressed = false;
@@ -89,5 +95,8 @@ public:
 
 	void screenShake(sf::Vector2f shake);
 	void loadLevel();
+	void resetLevel();
+	void gameOver();
+	void updatePlayerHealth();
 };
 

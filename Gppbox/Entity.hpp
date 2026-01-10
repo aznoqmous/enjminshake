@@ -41,6 +41,7 @@ public:
 
 	// Sprite Sheets
 	bool flipSprite = false;
+	float scale = 1.f;
 
 	int animationIndex = 0;
 	int animationFrame = 0;

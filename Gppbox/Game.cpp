@@ -28,7 +28,6 @@ Game::Game(sf::RenderWindow * win) {
 	bg.setTexture(&tex);
 	bg.setSize(sf::Vector2f(C::RES_X, C::RES_Y));
 	bg.setOrigin(sf::Vector2f(C::RES_X, C::RES_Y) / 2.f);
-
 	bgShader = new HotReloadShader("res/bg.vert", "res/bg.frag");
 	
 	for (int i = 0; i < C::RES_X / C::GRID_SIZE; ++i) 
@@ -98,6 +97,7 @@ void Game::processInput(sf::Event ev) {
 
 	if (mode == EditMode && ev.type == sf::Event::MouseWheelMoved)
 	{
+		if (ImGui::IsAnyItemHovered()) return;
 		float target = cameraZoom * (1.f - ev.mouseWheel.delta / 10.f);
 		if (target > 0.4f && target < 2.f) {
 			cameraZoom *= 1.f - ev.mouseWheel.delta / 10.f;

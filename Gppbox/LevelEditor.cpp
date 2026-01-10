@@ -89,7 +89,7 @@ void LevelEditor::draw(RenderWindow& win){
 
 
 void LevelEditor::handleInputs(double dt, Game& game) {
-    if (ImGui::IsAnyItemHovered()) {
+    if (ImGui::IsAnyItemHovered()){
         return;
     }
     if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {

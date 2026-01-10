@@ -7,27 +7,36 @@
 #include "Missile.hpp"
 
 void Drone::draw(RenderWindow& win) {
-	//Entity::draw(win);
 	sprite.setPosition(position);
 	sprite.setOrigin(spriteWidth / 2.f + 2, 20);
-	sprite.setScale(flipSprite ? -C::PIXEL_SIZE : C::PIXEL_SIZE, C::PIXEL_SIZE);
+	sprite.setScale((flipSprite ? -C::PIXEL_SIZE : C::PIXEL_SIZE) * scale, C::PIXEL_SIZE * scale);	
 	win.draw(sprite);
 }
 void Drone::update(double dt, Game& game){
-	Entity::update(dt, game);
 	
 	Vector2f tPosition = targetPosition;
 	tPosition.x = game.player.flipSprite ? tPosition.x : -tPosition.x;
 	tPosition.y += sin(Lib::getTimeStamp() * Lib::pi()) * 12.f;
 	tPosition.x += cos(Lib::getTimeStamp() * Lib::pi()) * 32.f;
-	dx = Interp::lerp(dx, copysign(1.f, (game.player.position.x + tPosition.x) - position.x), dt * 5.f);
-	dy = Interp::lerp(dy, copysign(1.f, (game.player.position.y + tPosition.y) - position.y), dt * 5.f);
+
+	Vector2f direction = game.player.position + tPosition - position;
+	Lib::normalize(direction);
+
+	dx = direction.x;
+	dy = direction.y;
+
+	//dx = Interp::lerp(dx, copysign(1.f, (game.player.position.x + tPosition.x) - position.x), dt * 5.f);
+	//dy = Interp::lerp(dy, copysign(1.f, (game.player.position.y + tPosition.y) - position.y), dt * 5.f);
+
+	Entity::update(dt, game);
 	
 	flipSprite = game.player.flipSprite;
 	
 	fireCooldown -= dt;
 
+	// teleport if too far from player
 	if (Lib::getMagnitude(position - game.player.position) > 500.f) {
+		scale = 0.f;
 		position = game.player.position + tPosition;
 		setPositionCell(position.x / C::GRID_SIZE, position.y / C::GRID_SIZE);
 	}

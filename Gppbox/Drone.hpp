@@ -9,9 +9,13 @@ public:
 
 	Drone() : Entity("res/drone.png") {
 		isFlying = true;
+		speed = 2.f;
+		scale = 0.f;
 	}
 	Drone(float cx, float cy) : Entity("res/drone.png", cx, cy) {
 		isFlying = true;
+		speed = 2.f;
+		scale = 0.f;
 	}
 	void draw(RenderWindow& win) override;
 	void update(double dt, Game& game) override;

@@ -36,6 +36,7 @@ Enjmin CPP gameplay programming project using a modern c++ sandbox.
   - [x] Parallax background 
 - [x] **Walls**
   - [x] New skin
+  - [ ] Noise based sprite
 - [x] **Level editor**
   - [x] Grid display
   - [x] Quick `Tab` switch Edit/Player mode 
@@ -43,6 +44,7 @@ Enjmin CPP gameplay programming project using a modern c++ sandbox.
   - [x] Enemy placement
   - [x] Player placement
   - [x] Mousewheel Zoom
+- [ ] Controls UI
 
 ____
 &copy; LICENCE MIT

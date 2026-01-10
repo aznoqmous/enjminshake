@@ -56,6 +56,8 @@ void Entity::update(double dt, Game& game) {
 
 	// always sync because *.smoothnessss.*
 	syncPixel();
+	
+	scale = Interp::lerp(scale, 1.f, dt * 2.f);
 }
 
 void Entity::draw(RenderWindow& win) {
@@ -66,7 +68,7 @@ void Entity::draw(RenderWindow& win) {
 		// do nothing ?
 	}
 	else if (isAlive()) {
-		if (abs(dx) > 0) setAnimation(Animation::Moving);
+		if (abs(dx) > 0.1f) setAnimation(Animation::Moving);
 		else setAnimation(Animation::Idle);
 	}
 	else {
@@ -88,7 +90,6 @@ void Entity::draw(RenderWindow& win) {
 			spriteHeight
 		)
 	);
-
 	sprite.setOrigin(spriteWidth / 2.f + 2, 20);
 	sprite.setScale(flipSprite ? -C::PIXEL_SIZE : C::PIXEL_SIZE, C::PIXEL_SIZE);
 	win.draw(sprite);

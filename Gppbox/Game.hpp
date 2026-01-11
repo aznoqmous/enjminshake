@@ -36,6 +36,8 @@ public:
 	sf::Texture	tex;
 	sf::Font font;
 
+	bool debugDisplay = false;
+
 	sf::View mainCamera;
 	sf::Vector2f cameraPosition;
 	float cameraZoom = 1.f;
@@ -53,6 +55,8 @@ public:
 	std::vector<sf::Sprite> wallSprites;
 	sf::Texture foliageTexture;
 	std::vector<sf::Sprite> foliageSprites;
+
+	sf::Sprite vignetteSprite;
 
 	ParticleMan beforeParts;
 	ParticleMan afterParts;

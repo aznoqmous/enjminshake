@@ -7,11 +7,12 @@ Enjmin CPP gameplay programming project using a modern c++ sandbox.
 The game features 2 weapons (Gun / Laser Rifle) and a friendly bot that fires rockets.
 
 ### Ingame Controls
-- Q/D : Move Left / Right
-- Space : Jump (maintain pressed to jump higher)
-- Left Click : Fire equipped weapon
-- Right Click : Fire bot rocket
-- Mousewheel : Select weapon
+- `Q` `D` : Move Left / Right
+- `Space` : Jump (maintain pressed to jump higher)
+- `Left Click` : Fire equipped weapon
+- `Right Click` : Fire bot rocket
+- `Mousewheel` : Select weapon
+- `T` : Toggle Imgui / Fps counter
 
 ## Level editor
 ![editor gif](/editor.gif)
@@ -19,11 +20,11 @@ The game feature an editor that allows you to edit the level as you go !
 Level can be saved and load from/to file 
 
 ### Level Editor Controls
-- Tab : Switch between Game / Editor
-- ZQSD : Move camera
-- Mousewheel : Zoom/Unzoom camera
-- Left Click : Place selected tile
-- Right Click : Erase hovered tile 
+- `Tab` : Switch between Game / Editor
+- `Z` `Q` `S` `D` : Move camera
+- `Mousewheel` : Zoom/Unzoom camera
+- `Left Click` : Place selected tile
+- `Right Click` : Erase hovered tile 
   
 ### Available tiles : 
 - Spawn Position
@@ -62,6 +63,7 @@ Level can be saved and load from/to file
   - [X] Follow player (smooth)
   - [x] Screenshake
   - [x] Parallax background 
+  - [x] Vignette 
 - [x] **Walls**
   - [x] New skin
   - [x] Random foliage on top walls
@@ -81,6 +83,6 @@ Level can be saved and load from/to file
 
 **Nuclear Throne Font** from [yellowafterlife](https://yellowafterlife.itch.io/cc-yal-7w7-block) 
 
-
+![dead](/dead.gif)
 ____
 &copy; LICENCE MIT

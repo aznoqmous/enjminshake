@@ -167,7 +167,10 @@ int main()
 
 		//fpsCounter.setPosition(g.mainCamera.getCenter() - (Vector2f)window.getSize() / 2.f + Vector2f(10.f, 0.f));
 		fpsCounter.setPosition(g.mainCamera.getCenter() - Vector2f(0.f, window.getSize().y / 2.f));
-		window.draw(fpsCounter);
+		
+		if (g.debugDisplay || g.mode == EditMode) {
+			window.draw(fpsCounter);
+		}
 
 		if (blurShader) blurShader->update(dt);
 		if (bloomShader) bloomShader->update(dt);
@@ -175,7 +178,10 @@ int main()
 		if (bloomWidth)
 			Bloom::render(window,winTex,destX,destFinal,&blurShader->sh,&bloomShader->sh, bloomWidth, bloomMul);
 
-		ImGui::SFML::Render(window);
+		// bourrin pour mes captures d'écrans
+		if (g.debugDisplay || g.mode == EditMode) {
+			ImGui::SFML::Render(window);
+		}
         window.display();
 		
 

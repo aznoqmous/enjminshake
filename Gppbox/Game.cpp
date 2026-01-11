@@ -49,6 +49,8 @@ Game::Game(sf::RenderWindow * win) {
 	gameOverText.setOrigin(Vector2f(gameOverText.getLocalBounds().width / 2.f, gameOverText.getLocalBounds().height / 2.f));
 	playerHealthText.setFont(font);
 
+	vignetteSprite = Lib::loadSprite(*(new Texture()), "res/vignette.png");
+
 	resetLevel();
 }
 
@@ -188,7 +190,7 @@ void Game::pollInput(double dt) {
 
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::T)) {
 			if (!twasPressed) {
-				foes.push_back(new Foe(7, 0));
+				debugDisplay = !debugDisplay;
 				twasPressed = true;
 			}
 		}
@@ -350,13 +352,20 @@ void Game::update(double dt) {
 	if(mode == EditMode) levelEditor.draw(win);
 
 	if (mode == PlayMode) {
+		vignetteSprite.setPosition(cameraPosition - mainCamera.getSize() / 2.f);
+		Vector2f camSize = mainCamera.getSize();
+		Vector2f vignetteSize = (Vector2f) vignetteSprite.getTexture()->getSize();
+		vignetteSprite.setScale(camSize.x / vignetteSize.x, camSize.y / vignetteSize.y);
+		
+		win.draw(vignetteSprite);
+		
 		if (player.isAlive()) {
 			playerHealthText.setPosition(cameraPosition - mainCamera.getSize() / 2.f + Vector2f(20.f, 0.f));
 			win.draw(playerHealthText);
 		}
 		else {
 			gameOver();
-			gameOverText.setPosition(cameraPosition);
+			gameOverText.setPosition(cameraPosition + Vector2f(0, 10.f * sin(Lib::getTimeStamp())));
 			win.draw(gameOverText);
 		}
 	}

@@ -61,14 +61,16 @@ void Game::cacheWalls()
 	wallSprites.clear();
 	for (Vector2i & w : walls) {
 		sf::Sprite sprite;
-		sprite.setTexture(levelEditor.tileTypes[1].texture);
-		sprite.setTextureRect(sf::IntRect(32, 0, 32, 32));
+		int i = levelEditor.tiles[w];
+		sprite.setTexture(levelEditor.tileTypes[levelEditor.tiles[w]].texture);
+		sprite.setTextureRect(sf::IntRect(i * levelEditor.tileTypes[i].spriteWidth, 0, levelEditor.tileTypes[i].spriteWidth, levelEditor.tileTypes[i].spriteHeight));
+		//sprite.setTextureRect(sf::IntRect(32, 0, 32, 32));
 		sprite.setPosition((float)w.x * C::GRID_SIZE, (float)w.y * C::GRID_SIZE);
 		sprite.setOrigin({ 8, 8 });
 		sprite.setScale(C::PIXEL_SIZE, C::PIXEL_SIZE);
 		wallSprites.push_back(sprite);
 
-		if (levelEditor.tiles[w + Vector2i(0, -1)] != Wall) {
+		if (levelEditor.tiles[w + Vector2i(0, -1)] != Wall && levelEditor.tiles[w + Vector2i(0, -1)] != SolidWall) {
 			sf::Sprite fSprite;
 			fSprite.setTexture(foliageTexture);
 			fSprite.setTextureRect(sf::IntRect((int) Dice::randF() * (64 - 16), 0, 16, 16));
@@ -85,6 +87,7 @@ void Game::processInput(sf::Event ev) {
 		closing = true;
 		return;
 	}
+
 	if (ev.type == sf::Event::KeyReleased) {
 		if (ev.key.code == Keyboard::K) {
 			walls.clear();
@@ -92,7 +95,6 @@ void Game::processInput(sf::Event ev) {
 		}
 	}
 	
-
 	if (mode == EditMode && ev.type == sf::Event::MouseWheelMoved)
 	{
 		if (ImGui::IsAnyItemHovered()) return;
@@ -110,7 +112,6 @@ void Game::processInput(sf::Event ev) {
 		player.activeWeapon = player.weapons[player.activeWeaponIndex];
 		//std::cout << ev.mouseWheel.delta << '\n';
 	}
-
 }
 
 
@@ -135,11 +136,6 @@ void Game::pollInput(double dt) {
 	}
 
 	if (mode == EditMode) {
-
-
-		if (sf::Mouse::VerticalWheel) {
-
-		}
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Q)) {
 			cameraPosition += Vector2f(-dt * 1000.f, 0);
 		}
@@ -151,6 +147,15 @@ void Game::pollInput(double dt) {
 		}
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) {
 			cameraPosition += Vector2f(0, dt * 1000.f);
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::C)) {
+			
+			player.setPositionCell(levelEditor.gridMousePos.x, levelEditor.gridMousePos.y);
+			player.syncPixel();
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::F)) {
+
+			cameraPosition = player.position;
 		}
 	}
 
@@ -326,8 +331,23 @@ void Game::update(double dt) {
 	beforeParts.draw(win);
 
 	if (mode == PlayMode) {
-		for (sf::Sprite & r : wallSprites)
-			win.draw(r);
+		Vector2f size = mainCamera.getSize();
+
+		for (sf::Sprite& r : wallSprites) {
+			Vector2f pos = r.getPosition();
+			if (
+				cameraPosition.x < pos.x + size.x/2.f  + 16.f * C::PIXEL_SIZE && cameraPosition.x + size.x / 2.f > pos.x
+				&& cameraPosition.y < pos.y + size.y/2.f  + 16.f * C::PIXEL_SIZE && cameraPosition.y + size.y / 2.f > pos.y
+				) {
+				win.draw(r);
+			}
+		}
+
+		/*for (Vector2i& wall : walls) {
+			win.draw(levelEditor.tileTypes[levelEditor.tiles[wall]].sprite);
+			levelEditor.drawTile(levelEditor.tiles[wall], (Vector2f) wall * (float) C::GRID_SIZE, win
+			);
+		}*/
 		for (sf::Sprite& r : foliageSprites)
 			win.draw(r);
 	}
@@ -389,6 +409,10 @@ bool Game::isWall(int cx, int cy)
 	return false;
 }
 
+bool Game::isBreakableWall(Vector2i pos){
+	return levelEditor.tiles[pos] == Wall;
+}
+
 
 void Game::im()
 {
@@ -437,6 +461,7 @@ void Game::loadLevel() {
 		TileType type = kv.second;
 		switch (type) {
 		case Wall:
+		case SolidWall:
 			walls.push_back(pos);
 			break;
 		case Enemy:

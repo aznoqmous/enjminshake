@@ -15,6 +15,7 @@ LevelEditor::LevelEditor() {
     tileTypes.clear();
     tileTypes.emplace_back(Empty);
     tileTypes.emplace_back(Wall);
+    tileTypes.emplace_back(SolidWall);
     tileTypes.emplace_back(Enemy);
     tileTypes.emplace_back(PlayerSpawn);
 
@@ -142,13 +143,16 @@ void LevelEditor::im(Game& game) {
         Value("tiles", static_cast<int>(tiles.size()));
         Value("gridx", gridMousePos.x);
         Value("gridy", gridMousePos.y);
-        std::string names[4] = { "Selected : Empty", "Selected : Wall", "Selected : Enemy", "Selected : PlayerSpawn" };
+        std::string names[5] = { "Selected : Empty", "Selected : Wall", "Selected : SolidWall", "Selected : Enemy", "Selected : PlayerSpawn" };
         ImGui::Text(names[static_cast<int>(selectedType)].c_str());
         if (Button("Empty")) {
             selectedType = TileType::Empty;
         }
         if (Button("Wall")) {
             selectedType = TileType::Wall;
+        }
+        if (Button("SolidWall")) {
+            selectedType = TileType::SolidWall;
         }
         if (Button("Enemy")) {
             selectedType = TileType::Enemy;

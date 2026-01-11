@@ -7,8 +7,9 @@ class Game;
 enum TileType {
 	Empty, // empty tiles must be destroyed
 	Wall,
+	SolidWall,
 	Enemy,
-	PlayerSpawn
+	PlayerSpawn,
 };
 
 

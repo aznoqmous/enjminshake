@@ -22,6 +22,8 @@ Level can be saved and load from/to file
 ### Level Editor Controls
 - `Tab` : Switch between Game / Editor
 - `Z` `Q` `S` `D` : Move camera
+- `F` : Focus player
+- `C` : Move player to mouse position
 - `Mousewheel` : Zoom/Unzoom camera
 - `Left Click` : Place selected tile
 - `Right Click` : Erase hovered tile 

@@ -73,7 +73,7 @@ void Missile::handleEntityCollision(Foe& foe, Game& game) {
 
 	for (auto it = game.walls.begin(); it != game.walls.end(); ) {
 		float distance = Lib::getMagnitude(position - Vector2f(it->x * C::GRID_SIZE, it->y * C::GRID_SIZE));
-		if (distance < explosionRange) {
+		if (game.isBreakableWall(*it) && distance < explosionRange) {
 			spawnExplosionParticles(Vector2f(it->x * C::GRID_SIZE, it->y * C::GRID_SIZE), game);
 			it = game.walls.erase(it);
 		}
@@ -104,7 +104,7 @@ void Missile::handleWallCollision(Vector2i& wall, Game& game) {
 
 	for (auto it = game.walls.begin(); it != game.walls.end(); ) {
 		float distance = Lib::getMagnitude(position - Vector2f(it->x * C::GRID_SIZE, it->y * C::GRID_SIZE));
-		if (distance < explosionRange || (it->x == wall.x && it->y == wall.y)) {
+		if (game.isBreakableWall(*it) && (distance < explosionRange || (it->x == wall.x && it->y == wall.y))) {
 			spawnExplosionParticles(Vector2f(it->x * C::GRID_SIZE, it->y * C::GRID_SIZE), game);
 			it = game.walls.erase(it);
 		}

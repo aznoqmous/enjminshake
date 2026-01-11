@@ -4,7 +4,7 @@
 class Game;
 class Missile : public Bullet {
 public:
-	float explosionRange = 80.f;
+	float explosionRange = 100.f;
 	float smokeInterval = 0.5f;
 	float smokeTime = 0.f;
 	float turnSpeed = 1.f;

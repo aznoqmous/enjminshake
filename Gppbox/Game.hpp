@@ -95,6 +95,7 @@ public:
 	void draw(sf::RenderWindow& win);
 
 	bool isWall(int cx, int cy);
+	bool isBreakableWall(Vector2i pos);
 	void im();
 
 	void screenShake(sf::Vector2f shake);

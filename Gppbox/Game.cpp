@@ -48,6 +48,7 @@ Game::Game(sf::RenderWindow * win) {
 	gameOverText.setFont(font);
 	gameOverText.setOrigin(Vector2f(gameOverText.getLocalBounds().width / 2.f, gameOverText.getLocalBounds().height / 2.f));
 	playerHealthText.setFont(font);
+	levelEditor.controlsText.setFont(font);
 
 	vignetteSprite = Lib::loadSprite(*(new Texture()), "res/vignette.png");
 
@@ -348,12 +349,16 @@ void Game::update(double dt) {
 			levelEditor.drawTile(levelEditor.tiles[wall], (Vector2f) wall * (float) C::GRID_SIZE, win
 			);
 		}*/
-		for (sf::Sprite& r : foliageSprites)
-			win.draw(r);
+		for (sf::Sprite& r : foliageSprites) {
+			Vector2f pos = r.getPosition();
+			if (
+				cameraPosition.x < pos.x + size.x / 2.f + 16.f * C::PIXEL_SIZE && cameraPosition.x + size.x / 2.f > pos.x
+				&& cameraPosition.y < pos.y + size.y / 2.f + 16.f * C::PIXEL_SIZE && cameraPosition.y + size.y / 2.f > pos.y
+				) {
+				win.draw(r);
+			}
+		}
 	}
-
-	for (sf::RectangleShape& r : rects) 
-		win.draw(r);
 	
 	for (Foe* e : deadFoes)
 		e->draw(win);

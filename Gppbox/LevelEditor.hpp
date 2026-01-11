@@ -57,6 +57,8 @@ public:
 	sf::Vector2i spawnPosition;
 	float cameraZoom = 1.f;
 
+	sf::Text controlsText;
+
 	LevelEditor();
 
 	void update(double dt, Game& game);

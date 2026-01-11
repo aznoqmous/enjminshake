@@ -23,11 +23,20 @@ LevelEditor::LevelEditor() {
         tileTypes[i].sprite.setTexture(tileTypes[i].texture);
         tileTypes[i].sprite.setTextureRect(sf::IntRect(i * tileTypes[i].spriteWidth, 0, tileTypes[i].spriteWidth, tileTypes[i].spriteHeight));
     }
+
+    controlsText.setString("ZQSD : Move camera / F : Focus player / C : Call player / Mousewheel : Zoom");
 }
 
 void LevelEditor::update(double dt, Game& game) {
     cameraZoom = game.cameraZoom;
 	handleInputs(dt, game);
+    controlsText.setPosition(
+        game.cameraPosition + Vector2f(
+            0.f,
+            game.mainCamera.getSize().y / 2.f - 48.f
+        )
+    );
+    controlsText.setOrigin(Vector2f(controlsText.getLocalBounds().width / 2.f, 0.f));
 }
 
 void LevelEditor::draw(RenderWindow& win){
@@ -38,7 +47,7 @@ void LevelEditor::draw(RenderWindow& win){
     // DRAW GRID
     RectangleShape cell(Vector2f(C::GRID_SIZE, C::GRID_SIZE));
     cell.setFillColor(Color::Transparent);
-    cell.setOutlineColor(Color::White);
+    cell.setOutlineColor(Color(100, 100, 100, 255));
     cell.setOutlineThickness(1.f);
     
     float minx = floor(viewport.left);
@@ -86,6 +95,9 @@ void LevelEditor::draw(RenderWindow& win){
     win.draw(selectedCell);
     
     drawTile(sf::Mouse::isButtonPressed(sf::Mouse::Button::Right) ? Empty : selectedType, Vector2f(gridMousePos.x * C::GRID_SIZE, gridMousePos.y * C::GRID_SIZE), win);
+
+    // DRAW CONTROLS
+    win.draw(controlsText);
 }
 
 

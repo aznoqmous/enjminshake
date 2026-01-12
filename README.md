@@ -249,6 +249,7 @@ mainCamera.setCenter(
 Muzzle fire is a simple sprite, drawed on the frame player fires, and for 1/10sc after that.
 
 ## Recoil
+[Weapon.cpp:64](/Gppbox/Weapon.cpp?plain=1#L64)  
 Recoil is simulated by :
 Applying a horizontal force to `Player::dx`  
 Applying a horizontal offset to `Weapon::offset`  

@@ -110,14 +110,12 @@ void Game::processInput(sf::Event ev) {
 			cameraZoom *= 1.f - ev.mouseWheel.delta / 10.f;
 			mainCamera.zoom(1.f - ev.mouseWheel.delta / 10.f);
 		}
-		//std::cout << ev.mouseWheel.delta << '\n';
 	}
 
 	if (mode == PlayMode && ev.type == sf::Event::MouseWheelMoved)
 	{
-		player.activeWeaponIndex = (player.activeWeaponIndex + (int) copysign(1, ev.mouseWheel.delta)) % player.weapons.size();
+		player.activeWeaponIndex = (player.activeWeaponIndex + (int) copysign(1, -ev.mouseWheel.delta)) % player.weapons.size();
 		player.activeWeapon = player.weapons[player.activeWeaponIndex];
-		//std::cout << ev.mouseWheel.delta << '\n';
 	}
 }
 
@@ -298,7 +296,14 @@ void Game::update(double dt) {
 		player.update(dt, *this);
 		drone.update(dt, *this);
 
-		cameraPosition = Interp::lerp(cameraPosition, player.position + Vector2f(0, -200.f), dt * 10.f);
+		cameraPosition = Interp::lerp(
+			cameraPosition, 
+			(player.position + Vector2f(0, -200.f) + 
+				((Vector2f)ImGui::GetMousePos() - mainCamera.getSize() / 2.f) * 0.2f + mainCamera.getCenter()
+			) / 2.f
+			,
+			dt * 10.f
+		);
 	}
 	screenShakeOffset.x = 0;
 	screenShakeOffset.y = 0;

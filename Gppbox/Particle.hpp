@@ -8,6 +8,7 @@
 #include <memory>
 
 using namespace sf;
+class Game;
 class Particle {
 public:
 
@@ -18,6 +19,9 @@ public:
 
 	float			dx = 0.0f;
 	float			dy = 0.0f;
+
+	float angularSpeed = 0.0f;
+	bool collideWithWalls = false;
 
 	float			life = 1.0f;
 
@@ -31,5 +35,5 @@ public:
 
 	Particle(std::string texturePath, float x, float y);
 
-	void update(float dt);
+	void update(float dt, Game& game);
 };

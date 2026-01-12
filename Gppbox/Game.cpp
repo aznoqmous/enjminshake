@@ -136,6 +136,12 @@ void Game::pollInput(double dt) {
 			if (mode == PlayMode) {
 				loadLevel();
 			}
+			else {
+				for (Foe* f : foes) delete f;
+				foes.clear();
+				for (Foe* f : deadFoes) delete f;
+				deadFoes.clear();
+			}
 		}
 	}
 	else {
@@ -258,8 +264,8 @@ void Game::update(double dt) {
 		g_time += dt;
 		if (bgShader) bgShader->update(dt);
 
-		beforeParts.update(dt);
-		afterParts.update(dt);
+		beforeParts.update(dt, *this);
+		afterParts.update(dt, *this);
 
 		for (Foe* e : foes)
 			e->update(dt, *this);

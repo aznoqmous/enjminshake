@@ -8,14 +8,14 @@ public:
 	std::vector<Particle> parts;
 	
 	void add(Particle p) {
-		p.update(0.f);
+		//p.update(0.f);
 		parts.push_back(std::move(p));
 	}
 
-	void update(double dt) {
+	void update(double dt, Game& game) {
 		for (auto iter = parts.begin(); iter != parts.end(); ) {
 			Particle & p = *iter;
-			p.update((float)dt);
+			p.update((float)dt, game);
 			if (p.destroyed)
 				iter = parts.erase(iter);
 			else

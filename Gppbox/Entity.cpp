@@ -98,10 +98,10 @@ void Entity::draw(RenderWindow& win) {
 void Entity::setPositionPixel(float px, float py) {
 	sprite.setPosition(px, py);
 	cx = (int)px / C::GRID_SIZE;
-	rx = ((1.0f * px / C::GRID_SIZE) - cx);
+	rx = px / C::GRID_SIZE - cx;
 
 	cy = (int)py / C::GRID_SIZE;
-	ry = ((1.0f * py / C::GRID_SIZE) - cy);
+	ry = py / C::GRID_SIZE - cy;
 }
 
 void Entity::setPositionCell(float cx, float cy) {

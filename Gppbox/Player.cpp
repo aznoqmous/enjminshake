@@ -38,6 +38,19 @@ void Player::fire(Game& game) {
 		sf::Vector2f shake;
 		shake.x = (flipSprite ? 1 : -1) * activeWeapon->recoil *  4.f * C::PIXEL_SIZE;
 		game.screenShake(shake);
+
+		Particle bulletParticle = Particle("res/shell.png", position.x, position.y);
+		bulletParticle.dy = -200.f;
+		bulletParticle.dx = (flipSprite ? 1 : -1) * (300.f + Dice::randF() * 100.f);
+		bulletParticle.sprite.setOrigin(1.5, 2);
+		bulletParticle.sprite.rotate(Dice::randF() * 360.f);
+		bulletParticle.angularSpeed = Dice::randF() * 1080.f;
+		bulletParticle.collideWithWalls = true;
+		bulletParticle.life = 3.f;
+		bulletParticle.bhv = [](Particle* p, float dt) {
+			p->dy += dt * C::GRAVITY * 100.f;
+		};
+		game.afterParts.add(bulletParticle);
 	}
 }
 

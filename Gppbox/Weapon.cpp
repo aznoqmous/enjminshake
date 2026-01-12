@@ -121,7 +121,7 @@ void Weapon::fire(Entity& entity, Game& game) {
 			p.life = 0.3f;
 			p.bhv = [](Particle* p, float dt) {
 				p->sprite.setTextureRect(IntRect(floor((1.f - p->life / 0.3f) * 4) * 16, 0, 16, 16));
-				};
+			};
 			game.afterParts.add(p);
 		}
 

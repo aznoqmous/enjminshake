@@ -20,22 +20,29 @@ public:
 		animationLength = { 4, 6, 2, 3 };
 		debugRectangle.setFillColor(sf::Color::Blue);
 
-		Weapon* gun = new Weapon(WeaponBullet, 0);
+		Weapon* gun = new Weapon(WeaponBullet, 0, "Gun");
+		gun->fireRate = 0.f;
+		gun->spray = 0.02f;
+		gun->muzzleFireOrigin = { -6, 9 };
 		weapons.push_back(gun);
 
-		Weapon* laserRifle = new Weapon(WeaponLaser, 3);
-		weapons.push_back(laserRifle);
+		Weapon* machineGun = new Weapon(WeaponBullet, 1, "Rifle");
+		machineGun->fireRate = 0.1f;
+		machineGun->spray = 0.05f;
+		machineGun->muzzleFireOrigin = { -14, 10 };
+		machineGun->isAutomatic = true;
+		weapons.push_back(machineGun);
 
-		activeWeapon = gun;
-	}
+		Weapon* tripleMachineGun = new Weapon(WeaponBullet, 2, "Triple Machinegun");
+		tripleMachineGun->fireRate = 0.1f;
+		tripleMachineGun->bulletCount = 3;
+		tripleMachineGun->bulletAngle = 0.1f;
+		tripleMachineGun->spray = 0.01f;
+		tripleMachineGun->muzzleFireOrigin = { -16, 10 };
+		tripleMachineGun->isAutomatic = true;
+		weapons.push_back(tripleMachineGun);
 
-	Player(float cx, float cy) : Entity("res/peer.png", cx, cy) {
-		animationLength = { 4, 6, 2, 3 };
-
-		Weapon* gun = new Weapon(WeaponBullet, 0);
-		weapons.push_back(gun);
-
-		Weapon* laserRifle = new Weapon(WeaponLaser, 3);
+		Weapon* laserRifle = new Weapon(WeaponLaser, 3, "Laser Rifle");
 		weapons.push_back(laserRifle);
 
 		activeWeapon = gun;

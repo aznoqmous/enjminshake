@@ -52,6 +52,12 @@ Game::Game(sf::RenderWindow * win) {
 
 	vignetteSprite = Lib::loadSprite(*(new Texture()), "res/vignette.png");
 
+	weaponUIBorders.setSize(Vector2f(32.f, 16.f) * (float)C::PIXEL_SIZE);
+	weaponUIBorders.setOutlineColor(Color::White);
+	weaponUIBorders.setOutlineThickness(C::PIXEL_SIZE);
+	weaponUIBorders.setFillColor(Color::Transparent);
+	weaponNameText.setFont(font);
+
 	resetLevel();
 }
 
@@ -165,10 +171,17 @@ void Game::pollInput(double dt) {
 		float horizontalControllerInput = sf::Joystick::getAxisPosition(0, sf::Joystick::X);
 		float deadzone = 15.f;
 		ImGui::Value("horizontal", horizontalControllerInput);
+
 		if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left) || sf::Joystick::isButtonPressed(0, 5)) {
-			player.fire(*this);
+			if (player.activeWeapon->isAutomatic) player.fire(*this);
+			else if (!wasFiring) player.fire(*this);
 			isFiring = true;
+			wasFiring = true;
 		}
+		else {
+			wasFiring = false;
+		}
+
 		if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Right) || sf::Joystick::isButtonPressed(0, 4)) {
 			drone.fire(*this);
 		}
@@ -377,7 +390,7 @@ void Game::update(double dt) {
 	if(mode == EditMode) levelEditor.draw(win);
 
 	if (mode == PlayMode) {
-		vignetteSprite.setPosition(cameraPosition - mainCamera.getSize() / 2.f);
+		vignetteSprite.setPosition(mainCamera.getCenter() - mainCamera.getSize() / 2.f);
 		Vector2f camSize = mainCamera.getSize();
 		Vector2f vignetteSize = (Vector2f) vignetteSprite.getTexture()->getSize();
 		vignetteSprite.setScale(camSize.x / vignetteSize.x, camSize.y / vignetteSize.y);
@@ -385,8 +398,21 @@ void Game::update(double dt) {
 		win.draw(vignetteSprite);
 		
 		if (player.isAlive()) {
-			playerHealthText.setPosition(cameraPosition - mainCamera.getSize() / 2.f + Vector2f(20.f, 0.f));
+			// DRAW PLAYER UI
+			playerHealthText.setPosition(mainCamera.getCenter() - mainCamera.getSize() / 2.f + Vector2f(20.f, 0.f));
 			win.draw(playerHealthText);
+
+			player.activeWeapon->sprite.setPosition(mainCamera.getCenter() - mainCamera.getSize() / 2.f + Vector2f(20.f, 80.f));
+			player.activeWeapon->sprite.setScale(C::PIXEL_SIZE, C::PIXEL_SIZE);
+			player.activeWeapon->sprite.setOrigin(0, 0);
+			win.draw(player.activeWeapon->sprite);
+
+			weaponUIBorders.setPosition(mainCamera.getCenter() - mainCamera.getSize() / 2.f + Vector2f(20.f, 80.f));
+			win.draw(weaponUIBorders);
+			
+			weaponNameText.setPosition(mainCamera.getCenter() - mainCamera.getSize() / 2.f + Vector2f(20.f, 140.f));
+			weaponNameText.setString(player.activeWeapon->weaponName);
+			win.draw(weaponNameText);
 		}
 		else {
 			gameOver();

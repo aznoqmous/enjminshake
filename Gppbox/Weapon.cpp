@@ -12,8 +12,9 @@ void Weapon::draw(Entity& entity, RenderWindow& win) {
 	sprite.setPosition(entity.sprite.getPosition());
 	win.draw(sprite);
 
-	if (isDrawMuzzleFire || fireRate - fireCooldown < 0.05f)
+	if (isDrawMuzzleFire || (fireCooldown > 0.f && fireRate - fireCooldown < 0.05f))
 	{
+		
 		muzzleFireSprite.setPosition(entity.sprite.getPosition());
 		muzzleFireSprite.setOrigin(muzzleFireOrigin);
 		muzzleFireSprite.setScale(entity.flipSprite ? -C::PIXEL_SIZE : C::PIXEL_SIZE, C::PIXEL_SIZE);
@@ -48,7 +49,8 @@ void Weapon::setWeaponIndex(int index) {
 }
 
 void Weapon::update(Entity& entity, double dt, Game& game) {
-	offset = Interp::lerp(offset, Vector2f(0, entity.dy * 3.f), dt * 50.f);
+	offset.y = Interp::lerp(offset.y, entity.dy * 3.f, dt * 50.f);
+	offset.x = Interp::lerp(offset.x, 0.f, dt * 50.f);
 	fireCooldown -= dt;
 	fireCooldown = clamp(fireCooldown, 0.f, fireRate);
 }
@@ -59,13 +61,19 @@ bool Weapon::canFire() {
 
 void Weapon::fire(Entity& entity, Game& game) {
 	fireCooldown = fireRate;
-
+	offset.x = (entity.flipSprite ? -1.f : 1.f) * 10.f;
 	if (type == WeaponBullet) {
-		Bullet* bullet = new Bullet();
-		bullet->position = entity.position + muzzleFireOrigin - Vector2f(entity.flipSprite ? 32.f : -32.f, 12.f);
-		bullet->velocity.x = entity.flipSprite ? -1 : 1;
-		Lib::rotate(bullet->velocity, Dice::randF() * Dice::randSign() * spray * Lib::pi() / 2.0f);
-		game.bullets.push_back(bullet);
+		for (float i = 0; i < bulletCount; i++) {
+
+			Bullet* bullet = new Bullet();
+			bullet->position = entity.position + muzzleFireOrigin - Vector2f(entity.flipSprite ? 32.f : -32.f, 12.f);
+			bullet->velocity.x = entity.flipSprite ? -1 : 1;
+			Lib::rotate(bullet->velocity,
+				(float) (1 - bulletCount) * bulletAngle / 2.f + bulletAngle * i +
+				Dice::randF() * Dice::randSign() * spray * Lib::pi() / 2.0f
+			);
+			game.bullets.push_back(bullet);
+		}
 		isDrawMuzzleFire = true;
 	}
 	if (type == WeaponLaser) {

@@ -57,16 +57,18 @@ public:
 	std::vector<sf::Sprite> foliageSprites;
 
 	sf::Sprite vignetteSprite;
+	sf::RectangleShape weaponUIBorders;
+	sf::Text weaponNameText;
 
 	ParticleMan beforeParts;
 	ParticleMan afterParts;
 
-	Player player = Player(14, 0);
+	Player player = Player();
 	Drone drone = Drone(14, 0);
 	std::vector<Foe*> foes;
 	std::vector<Foe*> deadFoes;
 	std::vector<Bullet*> bullets;
-	std::vector<ParallaxLayer* > parallaxLayers;
+	std::vector<ParallaxLayer*> parallaxLayers;
 	LevelEditor levelEditor;
 
 	GameMode mode = GameMode::PlayMode;
@@ -86,6 +88,7 @@ public:
 	bool twasPressed = false;
 	bool tabWasPressed = false;
 	bool isFiring = false;
+	bool wasFiring = false;
 	void processInput(sf::Event ev);
 	void pollInput(double dt);
 	void onSpacePressed();

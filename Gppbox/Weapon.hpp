@@ -1,6 +1,9 @@
 #pragma once
 #include <iostream>
 #include "Entity.hpp"
+
+using namespace std;
+
 class Game;
 
 enum WeaponType {
@@ -10,8 +13,10 @@ enum WeaponType {
 
 class Weapon {
 public:
-	int weaponIndex = 0;
 	WeaponType type;
+	string weaponName = "Gun";
+
+	int weaponIndex = 0;
 	Texture texture;
 	Sprite sprite;
 	int spriteWidth = 32;
@@ -27,18 +32,22 @@ public:
 	// firee
 	float fireRate = 0.1f;
 	float fireCooldown = 0.f;
+	int bulletCount = 1;
+	float bulletAngle = 10.f;
 	float recoil = 0.5f;
 	float spray = 0.05f;
 	Texture muzzleFireTexture;
 	Sprite muzzleFireSprite;
 	Vector2f muzzleFireOrigin { -6, 9 };
 	bool isDrawMuzzleFire = false;
-	Weapon(WeaponType type, int weaponIndex) {
+	bool isAutomatic = false;
+
+	Weapon(WeaponType type, int weaponIndex, string weaponName) {
 		this->type = type;
+		this->weaponName = weaponName;
 		sprite = Lib::loadSprite(texture, "res/weapons.png");
 		muzzleFireSprite = Lib::loadSprite(muzzleFireTexture, "res/muzzle-fire.png");
 		setWeaponIndex(weaponIndex);
-
 		laserVertices = VertexArray(LinesStrip, 10);
 	}
 
